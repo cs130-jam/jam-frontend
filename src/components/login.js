@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 import {Link} from 'react-router-dom';
-import JamService from '../services/jamService.js';
+import JamAPIService from '../services/jamService.js';
 
 const linkStyle = {
     color: 'black',
@@ -18,7 +18,6 @@ const Field = React.forwardRef(({label, type}, ref) => {
 });
 
 const Login = () => {
-    console.log("hi1");
     const usernameRef = React.useRef();
     const passwordRef = React.useRef();
 
@@ -28,10 +27,8 @@ const Login = () => {
             username: usernameRef.current.value,
             password: passwordRef.current.value
         };
-        console.log("hi2"); 
         console.log(data);
-        JamService.login(data).then((res)=> {
-            console.log("hi");  
+        JamAPIService.login(data).then((res)=> {
             console.log(res); 
         });
     };

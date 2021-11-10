@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://localhost:8080/";
+const API_BASE_URL = "http://localhost/api/";
+
+const API_CALL_URL = (...path) => API_BASE_URL + path.join("/");
 
 // import { apiUrl } from './util/request';
 // import useCookie from './util/useCookie';
@@ -36,13 +38,16 @@ const API_BASE_URL = "http://localhost:8080/";
 //         return ws;
 //     }
 
-class jamService{
-    login(data){
-        return fetch(API_BASE_URL+"api/login/internal", {
+class JamAPIService{
+    login(data) {
+        return fetch(API_CALL_URL("login", "internal"), {
             method: "POST",
             body: data
         });
     }
 
+    test() {
+        return fetch(API_CALL_URL("test", "user", "random"));
+    }
 }
-export default new jamService();
+export default new JamAPIService();
