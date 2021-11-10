@@ -75,6 +75,8 @@ const Form = ({onSubmit}) => {
         console.log(data);
         JamService.login(data).then((res)=>
         {
+
+          console.log("hi");
           console.log(res); 
         });
         onSubmit(data);
