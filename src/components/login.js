@@ -2,6 +2,7 @@ import React, {useState, useRef} from 'react';
 import '../App.css';
 import {Link} from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert'
+import InputField from '../util/inputField';
 
 const linkStyle = {
     color: 'black',
@@ -12,32 +13,24 @@ const alertStyle = {
   top: '0'
 };
 
-const Field = React.forwardRef(({label, type}, ref) => {
-    return (
-      <div>
-        <label className="form-label">{label}</label>
-        <input className="form-input" ref={ref} type={type} />
-      </div>
-    );
-});
-
 const Login = (props) => {
     const setSessionToken = props.setSessionToken;
     const apiService = props.apiService;
-    const [isValid, setIsValid] = useState(true);
+    const [isInvalid, setIsInvalid] = useState(false);
 
-    const usernameRef = React.useRef();
-    const passwordRef = React.useRef();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
     async function handleLogin(loginData) {
+        console.log(loginData);
         if(loginData.password == "wrong") {
-            setIsValid(false);
+            setIsInvalid(true);
         }
 
         let response = await apiService.current.login(loginData);
         if (response.ok) {
             let json = await response.json();
-            console.log(json);
+            setSessionToken(json.token);
         } else {
             let error = await response.json();
             if (error.status == 401) {
@@ -48,26 +41,34 @@ const Login = (props) => {
         }
     }
 
-    const handleSubmit = e => {
+    function handleSubmit(e) {
         e.preventDefault();
         handleLogin({
-            username: usernameRef.current.value,
-            password: passwordRef.current.value
+            username: username,
+            password: password
         });
     };
 
+    function onPassword(password) {
+        setPassword(password);
+        setIsInvalid(false);
+    }
+
+    function onUsername(username) {
+        setUsername(username);
+        setIsInvalid(false);
+    }
+
     return (
         <div className="d-flex justify-content-center align-items-center">
-       
-            <form className="form" onSubmit={handleSubmit}>
-            {!isValid && <Alert style={alertStyle} variant="danger">Invalid Credentials! Try again</Alert>}
-           <p className="title-text"> Login </p>
-                <Field ref={usernameRef} label="Username:" type="text" />
-                <Field ref={passwordRef} label="Password:" type="password" />
+            <form className="jam-form" onSubmit={handleSubmit}>
+                {isInvalid && <Alert style={alertStyle} variant="danger">Invalid Credentials! Try again</Alert>}
+                <p className="jam-title-text"> Login </p>
+                <InputField label="Username: " type="text" value={username} onInput={onUsername}/>
+                <InputField label="Password: " type="password" value={password} onInput={onPassword}/>
                 <div>
-                    <button className="submit-button" type="submit">Submit</button>
+                    <button className="jam-submit-button" type="submit">Submit</button>
                 </div>
-                <br/>
                 <Link style={linkStyle} to="/sign-up">Create Account</Link>
             </form>
         </div>

@@ -57,7 +57,11 @@ class JamAPIService {
     signup(data) {
         return fetch(API_CALL_URL("signup", "internal"), {
             method: "POST",
-            body: data
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(data)
         });
     }
 

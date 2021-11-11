@@ -106,10 +106,8 @@ const SignUp = () => {
 
 export default SignUp;*/
 
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import '../App.css';
-//import './signup.css';
-import {Link} from 'react-router-dom';
 import JamAPIService from '../services/jamService.js';
 
 const linkStyle = {
@@ -117,28 +115,22 @@ const linkStyle = {
     margin: '110px'
 };
 
-
-const formStyle = {
-  height: '800px'
-};
-
 const Field = React.forwardRef(({label, type}, ref) => {
     return (
-      <div>
-        <label className="form-label">{label}</label>
-        <input className="form-input" ref={ref} type={type} />
-      </div>
+        <div>
+            <label className="jam-form-label">{label}</label>
+            <input className="jam-form-input" ref={ref} type={type} />
+        </div>
     );
 });
 
-
-
 const SignUp = () => {
-    const firstnameRef = React.useRef();
-    const lastnameRef = React.useRef();
-    const usernameRef = React.useRef();
-    const passwordRef = React.useRef();
-    const confirmpasswordRef = React.useRef();
+    const firstnameRef = useRef();
+    const lastnameRef = useRef();
+    const usernameRef = useRef();
+    const passwordRef = useRef();
+    const confirmpasswordRef = useRef();
+    const [pageIndex, setPageIndex] = useState(0);
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -155,44 +147,64 @@ const SignUp = () => {
         });
     };
 
-    return (
-        <div className="d-flex justify-content-center align-items-center">
-           
-            <form className="form" style={formStyle} onSubmit={handleSubmit}>
-            <p className="title-text"> Sign Up </p>
-                <Field ref={firstnameRef} label="First Name:" type="text" />
-                <Field ref={lastnameRef} label="Last Name:" type="text" />
-                <Field ref={usernameRef} label="Email Address:" type="text" />
+    const pages = [
+        (
+            <div className="container-fluid g-0">
+                <p className="jam-title-text">Sign Up</p>
+                <Field ref={usernameRef} label="Username:" type="text" />
                 <Field ref={passwordRef} label="Password:" type="password" />
                 <Field ref={confirmpasswordRef} label="Confirm Password:" type="password" />
-                <label htmlFor="artist-search" className="form-label">
-                  <span >Add Favourite Artists</span>
+                <div className="row g-0">
+                    <div className="col-4">
+                        <button className="jam-submit-button disabled" disabled>Back</button>
+                    </div>
+                    <div className="col-4"></div>
+                    <div className="col-4">
+                        <button className="jam-submit-button">Next</button>
+                    </div>  
+                </div>
+            </div> 
+        ),
+        (
+            <div className="container-fluid g-0">
+                <p className="jam-title-text">Sign Up</p>
+                <Field ref={firstnameRef} label="First Name:" type="text" />
+                <Field ref={lastnameRef} label="Last Name:" type="text" />
+                <input
+                    type="text"
+                    id="instrument-search"
+                    placeholder="artists"
+                    name="s" 
+                />
+                <button className="jam-submit-button">Submit</button>
+            </div> 
+        ),
+        (
+            <div className="container-fluid g-0">
+                <p className="jam-title-text">Sign Up</p>
+                <label htmlFor="artist-search" className="jam-form-label">
+                    <span >Add Favourite Artists</span>
                 </label>
                 <br/>
                 <input
-                  type="text"
-                  id="artist-search"
-                  placeholder="artists"
-                  name="s" 
+                    type="text"
+                    id="artist-search"
+                    placeholder="artists"
+                    name="s" 
                 />
                 <button type="submit">Search</button>
-                <label htmlFor="instrument-search" className="form-label">
-                  <span >Add Interested Instruments</span>
-                </label>
-                <br/>
-                <input
-                  type="text"
-                  id="instrument-search"
-                  placeholder="artists"
-                  name="s" 
-                />
-                <button type="submit">Search</button>
-                <br/>
-                <br/>
                 <div>
                     <button className="submit-button" type="submit">Submit</button>
-                </div>  
-            </form>
+                </div> 
+            </div> 
+        )
+    ];
+
+    return (
+        <div className="d-flex justify-content-center align-items-center">
+            <div className="jam-form">
+                {pages[pageIndex]}
+            </div>
         </div>
     );
 };
