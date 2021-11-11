@@ -5,7 +5,6 @@ const API_CALL_URL = (...path) => API_BASE_URL + path.join("/");
 // import { apiUrl } from './util/request';
 // import useCookie from './util/useCookie';
 
-// const SESSION_TOKEN_KEY = "session-token";
 // const WEBSOCKET_URL = "ws://localhost:8080/api/ws/jam";
 
 // function App() {
@@ -38,11 +37,20 @@ const API_CALL_URL = (...path) => API_BASE_URL + path.join("/");
 //         return ws;
 //     }
 
-class JamAPIService{
+class JamAPIService {
+    constructor(sessionToken, removeSessionToken) {
+        this.removeSessionToken = removeSessionToken;
+        this.sessionToken = sessionToken;
+    }
+
     login(data) {
         return fetch(API_CALL_URL("login", "internal"), {
             method: "POST",
-            body: data
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(data)
         });
     }
 
@@ -50,4 +58,4 @@ class JamAPIService{
         return fetch(API_CALL_URL("test", "user", "random"));
     }
 }
-export default new JamAPIService();
+export default JamAPIService;

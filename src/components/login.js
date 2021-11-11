@@ -1,7 +1,6 @@
 import React from 'react';
 import '../App.css';
 import {Link} from 'react-router-dom';
-import JamAPIService from '../services/jamService.js';
 
 const linkStyle = {
     color: 'black',
@@ -17,19 +16,33 @@ const Field = React.forwardRef(({label, type}, ref) => {
     );
 });
 
-const Login = () => {
+const Login = (props) => {
+    const setSessionToken = props.setSessionToken;
+    const apiService = props.apiService;
+
     const usernameRef = React.useRef();
     const passwordRef = React.useRef();
 
+    async function handleLogin(loginData) {
+        let response = await apiService.current.login(loginData);
+        if (response.ok) {
+            let json = await response.json();
+            console.log(json);
+        } else {
+            let error = await response.json();
+            if (error.status == 401) {
+                alert("Invalid username or password");
+            } else {
+                console.log(error);
+            }
+        }
+    }
+
     const handleSubmit = e => {
         e.preventDefault();
-        const data = {
+        handleLogin({
             username: usernameRef.current.value,
             password: passwordRef.current.value
-        };
-        console.log(data);
-        JamAPIService.login(data).then((res)=> {
-            console.log(res); 
         });
     };
 
