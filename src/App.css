@@ -37,6 +37,27 @@
     width: 100%;
 }
 
+.jam-form-input-error {
+    position: relative;
+}
+
+.jam-form-input-error input {
+    margin: 10px 0px;
+    padding: 5px;
+    border: 1px solid #bfbfbf;
+    border-radius: 3px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.jam-form-input-error span {
+    position: absolute;
+    top: 18px;
+    right: 5px;
+    font-size: 10pt;
+    color: red;
+}
+
 .jam-title-text {
     font-size: 20px;
     text-align: center;

@@ -34,7 +34,7 @@ function App() {
                             <Login setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
                         <Route path="/sign-up">
-                            <SignUp />
+                            <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
                         <Route path="/about-us">
                             <AboutUs />

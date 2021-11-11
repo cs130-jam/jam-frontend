@@ -1,6 +1,8 @@
 const API_BASE_URL = "http://localhost/api/";
 
 const API_CALL_URL = (...path) => API_BASE_URL + path.join("/");
+const API_QUERY_PARAMS = (url, params) => url + "?" + new URLSearchParams(params);
+
 
 // import { apiUrl } from './util/request';
 // import useCookie from './util/useCookie';
@@ -44,7 +46,7 @@ class JamAPIService {
     }
 
     login(data) {
-        return fetch(API_CALL_URL("login", "internal"), {
+        return fetch(API_CALL_URL("internal", "login"), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -55,7 +57,7 @@ class JamAPIService {
     }
 
     signup(data) {
-        return fetch(API_CALL_URL("signup", "internal"), {
+        return fetch(API_CALL_URL("internal", "signup"), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -63,6 +65,12 @@ class JamAPIService {
             },
             body: JSON.stringify(data)
         });
+    }
+
+    existingUser(username) {
+        return fetch(API_QUERY_PARAMS(API_CALL_URL("internal", "user"), {
+            "username": username
+        }));
     }
 
     test() {

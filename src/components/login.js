@@ -16,8 +16,8 @@ const alertStyle = {
 const Login = (props) => {
     const setSessionToken = props.setSessionToken;
     const apiService = props.apiService;
+    
     const [isInvalid, setIsInvalid] = useState(false);
-
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 

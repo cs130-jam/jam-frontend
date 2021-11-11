@@ -7,10 +7,9 @@ const InputField = (props) => {
             <input 
                 className="jam-form-input" 
                 type={props.type}
-                name={props.label} 
                 value={props.value} 
                 onInput={e => props.onInput(e.target.value)}/>
-      </div>
+        </div>
     );
 }
 

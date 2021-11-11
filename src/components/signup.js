@@ -108,7 +108,11 @@ export default SignUp;*/
 
 import React, {useRef, useState} from 'react';
 import '../App.css';
-import JamAPIService from '../services/jamService.js';
+import InputField from '../util/inputField';
+import useInterval from '../util/useInterval';
+import ErrorInputField from '../util/errorInputField';
+
+const CHECK_USERNAME_DELAY = 2000; // every 2 seconds
 
 const linkStyle = {
     color: 'black',
@@ -124,43 +128,98 @@ const Field = React.forwardRef(({label, type}, ref) => {
     );
 });
 
-const SignUp = () => {
-    const firstnameRef = useRef();
-    const lastnameRef = useRef();
-    const usernameRef = useRef();
-    const passwordRef = useRef();
-    const confirmpasswordRef = useRef();
+const SignUp = (props) => {
+    const setSessionToken = props.setSessionToken;
+    const apiService = props.apiService;
+
+    const [isValidUsername, setIsValidUsername] = useState(true);
+    const [username, setUsername] = useState("");
+    const lastUsername = useRef("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+
     const [pageIndex, setPageIndex] = useState(0);
 
-    const handleSubmit = e => {
-        e.preventDefault();
-        const data = {
-            firstname: firstnameRef.current.value,
-            lastname: lastnameRef.current.value,
-            username: usernameRef.current.value,
-            password: passwordRef.current.value
-        };
+    async function checkUsername() {
+        if (username == lastUsername.current) return isValidUsername;
 
-        console.log(data);
-        JamAPIService.signup(data).then((res)=> {
-            console.log(res); 
-        });
-    };
+        let response = await apiService.current.existingUser(username);
+        setIsValidUsername(response.ok);
+        lastUsername.current = username;
+        return response.ok;
+    }
+
+    useInterval(checkUsername, CHECK_USERNAME_DELAY);
+
+    async function userCredentials() {
+        if (password != confirmPassword || password == "" || username == "") {
+            return;
+        }
+
+        let validUsername = await checkUsername();
+        if (!validUsername) {
+            return;
+        }
+
+        setPageIndex(pageIndex + 1);
+    }
+
+    function userNames() {
+        if (firstName.length == 0) {
+            return;
+        }
+
+        setPageIndex(pageIndex + 1);
+    }
+
+    function prevPage() {
+        setPageIndex(pageIndex - 1);
+    }
+
+    // const handleSubmit = e => {
+    //     e.preventDefault();
+    //     const data = {
+    //         firstname: firstnameRef.current.value,
+    //         lastname: lastnameRef.current.value,
+    //         username: usernameRef.current.value,
+    //         password: passwordRef.current.value
+    //     };
+
+    //     console.log(data);
+    //     JamAPIService.signup(data).then((res)=> {
+    //         console.log(res); 
+    //     });
+    // };
 
     const pages = [
         (
             <div className="container-fluid g-0">
                 <p className="jam-title-text">Sign Up</p>
-                <Field ref={usernameRef} label="Username:" type="text" />
-                <Field ref={passwordRef} label="Password:" type="password" />
-                <Field ref={confirmpasswordRef} label="Confirm Password:" type="password" />
+                <ErrorInputField 
+                    value={username} 
+                    onInput={setUsername}
+                    label="Username: " 
+                    type="text" 
+                    isError={!isValidUsername} 
+                    message="Username taken"/>
+                <InputField value={password} onInput={setPassword} label="Password:" type="password" />
+                <ErrorInputField 
+                    value={confirmPassword}
+                    onInput={setConfirmPassword}
+                    label="Confirm Password: " 
+                    type="password" 
+                    isError={password != confirmPassword}
+                    message="Passwords must match"/>
                 <div className="row g-0">
                     <div className="col-4">
-                        <button className="jam-submit-button disabled" disabled>Back</button>
+                        {/* <button className="jam-submit-button disabled" disabled>Back</button> */}
                     </div>
                     <div className="col-4"></div>
                     <div className="col-4">
-                        <button className="jam-submit-button">Next</button>
+                        <button className="jam-submit-button" onClick={userCredentials}>Next</button>
                     </div>  
                 </div>
             </div> 
@@ -168,16 +227,34 @@ const SignUp = () => {
         (
             <div className="container-fluid g-0">
                 <p className="jam-title-text">Sign Up</p>
-                <Field ref={firstnameRef} label="First Name:" type="text" />
-                <Field ref={lastnameRef} label="Last Name:" type="text" />
+                <ErrorInputField 
+                    value={firstName}
+                    onInput={setFirstName}
+                    label="First Name: " 
+                    type="text" 
+                    isError={firstName.length == 0}
+                    message="First name is required"/>
+                <InputField value={lastName} onInput={setLastName} label="Last Name:" type="text" />
+                <div className="row g-0">
+                    <div className="col-4">
+                        <button className="jam-submit-button" onClick={prevPage}>Back</button>
+                    </div>
+                    <div className="col-4"></div>
+                    <div className="col-4">
+                        <button className="jam-submit-button" onClick={userNames}>Next</button>
+                    </div>  
+                </div>
+            </div> 
+        ),
+        (
+            <div className="container-fluid g-0">
                 <input
                     type="text"
                     id="instrument-search"
                     placeholder="artists"
                     name="s" 
                 />
-                <button className="jam-submit-button">Submit</button>
-            </div> 
+            </div>
         ),
         (
             <div className="container-fluid g-0">
