@@ -1,11 +1,7 @@
 import React, {useState, useRef} from 'react';
 import '../App.css';
 import {Link} from 'react-router-dom';
-<<<<<<< HEAD
-import JamAPIService from '../services/jamService.js';
 import Alert from 'react-bootstrap/Alert'
-=======
->>>>>>> andrew-login-integration
 
 const linkStyle = {
     color: 'black',
