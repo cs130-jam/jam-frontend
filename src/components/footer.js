@@ -3,14 +3,7 @@ import {Link} from 'react-router-dom';
 
 const footerStyle = {
     padding: '1rem',
-    //background: 'rgb(235, 195, 64)',
-    position: 'fixed',
-    bottom: '0px',
     width: '100%'
-    /*position:'absolute',
-    left:'0',
-    bottom:'0',
-    right:'0'*/
 };
 
 const lineStyle = {

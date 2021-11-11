@@ -15,23 +15,7 @@ import JamAPIService from './services/jamService';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    height: "calc(100% - 106px - 118px)" // values determined from header and footer height
-};
-
-const fullHeight = {
-    height: "100vh",
-    width: "100vw",
-    padding: "0px",
-    margin: "0px"
-}
-
-const footerStyle = {
-  //padding: '1rem',
-  //background: 'rgb(235, 195, 64)',
-  position: 'fixed',
-  bottom: '0',
-  width: '100%'
-  
+    minHeight: "calc(100vh - 106px - 118px)" // values determined from header and footer height
 };
 
 function App() {
@@ -41,7 +25,7 @@ function App() {
     return (
         <div >
            <Header />
-          <div className="container-fluid g-0" style={fullHeight}>
+          <div className="container-fluid g-0">
         
             <BrowserRouter>
                 <div className="row" style={contentStyle}>

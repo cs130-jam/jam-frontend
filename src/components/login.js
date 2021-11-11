@@ -8,7 +8,6 @@ const linkStyle = {
     margin: '110px'
 };
 
-
 const alertStyle = {
   top: '0'
 };
