@@ -43,6 +43,7 @@ const DropdownField = (props) => {
             } else {
                 inputElem.current.blur();
             }
+            setSelectedIndex(-1);
         } 
     }
 
@@ -70,6 +71,7 @@ const DropdownField = (props) => {
 
     function select(index) {
         onSelect(entries[index]);
+        setSelectedIndex(-1);
         onInput("");
     }
 

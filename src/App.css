@@ -57,6 +57,7 @@
 
 .jam-form-input-dropdown {
     position: relative;
+    z-index: 100;
 }
 
 .jam-form-input-dropdown ul {
@@ -95,6 +96,7 @@
     padding: 7px 13px;
     border: 1px solid #c9c9c9;
     position: relative;
+    margin-top: 5px;
 }
 
 .removable-list-entry button {
@@ -107,4 +109,7 @@
     right: 10px;
     width: 25px;
     height: 25px;
+    line-height: 10px;
+    text-align: center;
+    vertical-align: middle;
 }

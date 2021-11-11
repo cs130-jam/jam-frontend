@@ -148,7 +148,7 @@ const SignUp = (props) => {
     const [knownInstruments, setKnownInstruments] = useState([]);
     const [instQuery, setInstQuery] = useState("");
 
-    const [pageIndex, setPageIndex] = useState(0);
+    const [pageIndex, setPageIndex] = useState(2);
 
     async function checkUsername() {
         if (username === lastUsername.current) return isValidUsername;
@@ -209,6 +209,14 @@ const SignUp = (props) => {
     }
     useEffect(() => getInstruments(), []);
 
+    function removeInstrument(instrument) {
+        setKnownInstruments(knownInstruments.filter(filteredInstrument => filteredInstrument != instrument));
+    }
+
+    function instrumentsDone() {
+        setPageIndex(pageIndex + 1);
+    }
+
     // const handleSubmit = e => {
     //     e.preventDefault();
     //     const data = {
@@ -233,8 +241,8 @@ const SignUp = (props) => {
                     onInput={setUsername}
                     label="Username: " 
                     type="text" 
-                    isError={!isValidUsername} 
-                    message="Username taken"/>
+                    isError={!isValidUsername || username.length === 0} 
+                    message={username.length === 0 ? "Username is required" : "Username taken"}/>
                 <InputField value={password} onInput={setPassword} label="Password:" type="password" />
                 <ErrorInputField 
                     value={confirmPassword}
@@ -294,10 +302,19 @@ const SignUp = (props) => {
                     {knownInstruments.map(instrument => (
                         <li className="removable-list-entry" key={instrument}>
                             <span>{instrument}</span>
-                            <button>x</button>
+                            <button onClick={e => removeInstrument(instrument)}>x</button>
                         </li>
                     ))}
                 </ul>
+                <div className="row g-0">
+                    <div className="col-4">
+                        <button className="jam-submit-button" onClick={prevPage}>Back</button>
+                    </div>
+                    <div className="col-4"></div>
+                    <div className="col-4">
+                        <button className="jam-submit-button" onClick={instrumentsDone}>Next</button>
+                    </div>  
+                </div>
             </div>
         ),
         (
