@@ -1,5 +1,3 @@
-import { forwardRef } from "react";
-
 const ErrorInputField = (props) => {
     const label = props.label;
     const type = props.type;
@@ -12,7 +10,7 @@ const ErrorInputField = (props) => {
         <div>
             <label className="jam-form-label">{label}</label>
             <div className="jam-form-input-error">
-                <input type={type} value={value} onInput={e => props.onInput(e.target.value)}/>
+                <input type={type} value={value} onInput={e => onInput(e.target.value)}/>
                 {isError ? <span>{message}</span> : <div></div>}
             </div>
         </div>

@@ -1,5 +1,3 @@
-import '../App.css';
-
 const InputField = (props) => {
     return (
         <div>

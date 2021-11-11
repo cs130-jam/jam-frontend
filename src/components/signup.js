@@ -106,18 +106,14 @@ const SignUp = () => {
 
 export default SignUp;*/
 
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../App.css';
 import InputField from '../util/inputField';
 import useInterval from '../util/useInterval';
 import ErrorInputField from '../util/errorInputField';
+import DropdownField from '../util/dropdownField';
 
 const CHECK_USERNAME_DELAY = 2000; // every 2 seconds
-
-const linkStyle = {
-    color: 'black',
-    margin: '110px'
-};
 
 const Field = React.forwardRef(({label, type}, ref) => {
     return (
@@ -127,6 +123,12 @@ const Field = React.forwardRef(({label, type}, ref) => {
         </div>
     );
 });
+
+const instrumentsListStyle = {
+    margin: "0px",
+    padding: "0px",
+    listStyleType: "none"
+}
 
 const SignUp = (props) => {
     const setSessionToken = props.setSessionToken;
@@ -141,10 +143,15 @@ const SignUp = (props) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
 
+    const [instruments, setInstruments] = useState([]);
+    const [filteredInstruments, setFilteredInstruments] = useState([]);
+    const [knownInstruments, setKnownInstruments] = useState([]);
+    const [instQuery, setInstQuery] = useState("");
+
     const [pageIndex, setPageIndex] = useState(0);
 
     async function checkUsername() {
-        if (username == lastUsername.current) return isValidUsername;
+        if (username === lastUsername.current) return isValidUsername;
 
         let response = await apiService.current.existingUser(username);
         setIsValidUsername(response.ok);
@@ -155,7 +162,7 @@ const SignUp = (props) => {
     useInterval(checkUsername, CHECK_USERNAME_DELAY);
 
     async function userCredentials() {
-        if (password != confirmPassword || password == "" || username == "") {
+        if (password !== confirmPassword || password === "" || username === "") {
             return;
         }
 
@@ -168,7 +175,7 @@ const SignUp = (props) => {
     }
 
     function userNames() {
-        if (firstName.length == 0) {
+        if (firstName.length === 0) {
             return;
         }
 
@@ -178,6 +185,29 @@ const SignUp = (props) => {
     function prevPage() {
         setPageIndex(pageIndex - 1);
     }
+
+    function getFilteredInstruments(query) {
+        query = query.toLowerCase();
+        return instruments.filter(instrument => {
+            const compareLength = Math.min(query.length, instrument.length);
+            return query.substring(0, compareLength) === instrument.substring(0, compareLength).toLowerCase();
+        })
+    }
+    useEffect(() => {
+        setFilteredInstruments(getFilteredInstruments(instQuery));
+    }, [instQuery, instruments]);
+
+    function onInstrumentSelect(instrument) {
+        if (knownInstruments.includes(instrument.name)) return;
+        setKnownInstruments([...knownInstruments, instrument.name]);
+    }
+
+    async function getInstruments() {
+        let response = await apiService.current.getInstruments();
+        let json = await response.json();
+        setInstruments(json);
+    }
+    useEffect(() => getInstruments(), []);
 
     // const handleSubmit = e => {
     //     e.preventDefault();
@@ -211,7 +241,7 @@ const SignUp = (props) => {
                     onInput={setConfirmPassword}
                     label="Confirm Password: " 
                     type="password" 
-                    isError={password != confirmPassword}
+                    isError={password !== confirmPassword}
                     message="Passwords must match"/>
                 <div className="row g-0">
                     <div className="col-4">
@@ -232,7 +262,7 @@ const SignUp = (props) => {
                     onInput={setFirstName}
                     label="First Name: " 
                     type="text" 
-                    isError={firstName.length == 0}
+                    isError={firstName.length === 0}
                     message="First name is required"/>
                 <InputField value={lastName} onInput={setLastName} label="Last Name:" type="text" />
                 <div className="row g-0">
@@ -248,12 +278,26 @@ const SignUp = (props) => {
         ),
         (
             <div className="container-fluid g-0">
-                <input
+                <p className="jam-title-text">Sign Up</p>
+                <DropdownField 
+                    value={instQuery}
+                    onInput={setInstQuery}
+                    label="Known Instruments:" 
                     type="text"
-                    id="instrument-search"
-                    placeholder="artists"
-                    name="s" 
-                />
+                    hasMore={false}
+                    onSelect={onInstrumentSelect}
+                    entries = {filteredInstruments.map(inst => {return {
+                        name: inst, 
+                        html: (<span>{inst}</span>)
+                    }})}/>
+                <ul style={instrumentsListStyle}>
+                    {knownInstruments.map(instrument => (
+                        <li className="removable-list-entry" key={instrument}>
+                            <span>{instrument}</span>
+                            <button>x</button>
+                        </li>
+                    ))}
+                </ul>
             </div>
         ),
         (

@@ -73,8 +73,17 @@ class JamAPIService {
         }));
     }
 
+    getInstruments() {
+        return fetch(API_CALL_URL("user", "choices", "instruments"));
+    }
+
     test() {
-        return fetch(API_CALL_URL("test", "user", "random"));
+        return fetch(API_CALL_URL("test", "user", "random"), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            },
+        });
     }
 }
 export default JamAPIService;
