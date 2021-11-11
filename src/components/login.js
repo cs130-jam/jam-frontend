@@ -1,8 +1,11 @@
 import React, {useState, useRef} from 'react';
 import '../App.css';
 import {Link} from 'react-router-dom';
+<<<<<<< HEAD
 import JamAPIService from '../services/jamService.js';
 import Alert from 'react-bootstrap/Alert'
+=======
+>>>>>>> andrew-login-integration
 
 const linkStyle = {
     color: 'black',
@@ -23,28 +26,41 @@ const Field = React.forwardRef(({label, type}, ref) => {
     );
 });
 
-const Login = () => {
-    const usernameRef = useRef();
-    const passwordRef = useRef();
+const Login = (props) => {
+    const setSessionToken = props.setSessionToken;
+    const apiService = props.apiService;
     const [isValid, setIsValid] = useState(true);
+
+    const usernameRef = React.useRef();
+    const passwordRef = React.useRef();
+
+    async function handleLogin(loginData) {
+        if(loginData.password == "wrong") {
+            setIsValid(false);
+        }
+
+        let response = await apiService.current.login(loginData);
+        if (response.ok) {
+            let json = await response.json();
+            console.log(json);
+        } else {
+            let error = await response.json();
+            if (error.status == 401) {
+                alert("Invalid username or password");
+            } else {
+                console.log(error);
+            }
+        }
+    }
 
     const handleSubmit = e => {
         e.preventDefault();
-        const data = {
+        handleLogin({
             username: usernameRef.current.value,
             password: passwordRef.current.value
-        };
-
-        if(passwordRef.current.value == "wrong") {
-            setIsValid(false);
-        }
-        console.log(data);
-        /*JamAPIService.login(data).then((res)=> {
-            console.log(res); 
-        });*/
+        });
     };
 
-    
     return (
         <div className="d-flex justify-content-center align-items-center">
        
