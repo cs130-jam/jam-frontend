@@ -46,6 +46,13 @@ class JamAPIService{
         });
     }
 
+    signup(data) {
+        return fetch(API_CALL_URL("signup", "internal"), {
+            method: "POST",
+            body: data
+        });
+    }
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"));
     }

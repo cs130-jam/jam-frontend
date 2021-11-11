@@ -1,29 +1,4 @@
 /*import React from 'react';
-
-function Login() {
-
-  return(
-    <div>This is a rectangle!
-    <form>
-      <label>
-        <p>Username</p>
-        <input type="text" />
-      </label>
-      <label>
-        <p>Password</p>
-        <input type="password" />
-      </label>
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
-    </div>
-  );
-}
-
-export default Login;*/
-
-import React from 'react';
 import ReactDOM from 'react-dom';
 
 const appStyle = {
@@ -80,13 +55,19 @@ const Field = React.forwardRef(({label, type}, ref) => {
 
 const Form = ({onSubmit}) => {
   console.log("hi1");
-    const usernameRef = React.useRef();
+    const firstnameRef = React.useRef();
+    const lastnameRef = React.useRef();
+    const emailRef = React.useRef();
     const passwordRef = React.useRef();
+    const confirmpasswordRef = React.useRef();
     const handleSubmit = e => {
         e.preventDefault();
         const data = {
-            username: usernameRef.current.value,
-            password: passwordRef.current.value
+            firstname: firstnameRef.current.value,
+            lastname: lastnameRef.current.value,
+            email: emailRef.current.value,
+            password: passwordRef.current.value,
+            confirmpassword: confirmpasswordRef.current.value
         };
         console.log("hi2"); 
         console.log(data);
@@ -94,8 +75,11 @@ const Form = ({onSubmit}) => {
     };
     return (
       <form style={formStyle} onSubmit={handleSubmit} >
-        <Field ref={usernameRef} label="Username:" type="text" />
+        <Field ref={firstnameRef} label="First Name:" type="text" />
+        <Field ref={lastnameRef} label="Last Name:" type=" text" />
+        <Field ref={emailRef} label="Email Address:" type=" text" />
         <Field ref={passwordRef} label="Password:" type="password" />
+        <Field ref={confirmpasswordRef} label="Password:" type="password" />
         <div>
           <button style={submitStyle} type="submit">Submit</button>
         </div>
@@ -117,6 +101,99 @@ const SignUp = () => {
       <div style={appStyle}>
         <Form onSubmit={handleSubmit} />
       </div>
+    );
+};
+
+export default SignUp;*/
+
+import React from 'react';
+import '../App.css';
+//import './signup.css';
+import {Link} from 'react-router-dom';
+import JamAPIService from '../services/jamService.js';
+
+const linkStyle = {
+    color: 'black',
+    margin: '110px'
+};
+
+
+const formStyle = {
+  height: '800px'
+};
+
+const Field = React.forwardRef(({label, type}, ref) => {
+    return (
+      <div>
+        <label className="form-label">{label}</label>
+        <input className="form-input" ref={ref} type={type} />
+      </div>
+    );
+});
+
+
+
+const SignUp = () => {
+    const firstnameRef = React.useRef();
+    const lastnameRef = React.useRef();
+    const usernameRef = React.useRef();
+    const passwordRef = React.useRef();
+    const confirmpasswordRef = React.useRef();
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        const data = {
+            firstname: firstnameRef.current.value,
+            lastname: lastnameRef.current.value,
+            username: usernameRef.current.value,
+            password: passwordRef.current.value
+        };
+
+        console.log(data);
+        JamAPIService.signup(data).then((res)=> {
+            console.log(res); 
+        });
+    };
+
+    return (
+        <div className="d-flex justify-content-center align-items-center">
+           
+            <form className="form" style={formStyle} onSubmit={handleSubmit}>
+            <p className="title-text"> Sign Up </p>
+                <Field ref={firstnameRef} label="First Name:" type="text" />
+                <Field ref={lastnameRef} label="Last Name:" type="text" />
+                <Field ref={usernameRef} label="Email Address:" type="text" />
+                <Field ref={passwordRef} label="Password:" type="password" />
+                <Field ref={confirmpasswordRef} label="Confirm Password:" type="password" />
+                <label htmlFor="artist-search" className="form-label">
+                  <span >Add Favourite Artists</span>
+                </label>
+                <br/>
+                <input
+                  type="text"
+                  id="artist-search"
+                  placeholder="artists"
+                  name="s" 
+                />
+                <button type="submit">Search</button>
+                <label htmlFor="instrument-search" className="form-label">
+                  <span >Add Interested Instruments</span>
+                </label>
+                <br/>
+                <input
+                  type="text"
+                  id="instrument-search"
+                  placeholder="artists"
+                  name="s" 
+                />
+                <button type="submit">Search</button>
+                <br/>
+                <br/>
+                <div>
+                    <button className="submit-button" type="submit">Submit</button>
+                </div>  
+            </form>
+        </div>
     );
 };
 

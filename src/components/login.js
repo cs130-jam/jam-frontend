@@ -1,12 +1,20 @@
-import React from 'react';
+import React, {useState} from 'react';
 import '../App.css';
 import {Link} from 'react-router-dom';
 import JamAPIService from '../services/jamService.js';
+import Alert from 'react-bootstrap/Alert'
 
 const linkStyle = {
     color: 'black',
     margin: '110px'
 };
+
+
+const alertStyle = {
+  top: '0'
+};
+
+const isValid = true;
 
 const Field = React.forwardRef(({label, type}, ref) => {
     return (
@@ -27,15 +35,24 @@ const Login = () => {
             username: usernameRef.current.value,
             password: passwordRef.current.value
         };
+
+        if(passwordRef.current.value == "wrong")
+        {
+          isValid = false;
+        }
         console.log(data);
-        JamAPIService.login(data).then((res)=> {
+        /*JamAPIService.login(data).then((res)=> {
             console.log(res); 
-        });
+        });*/
     };
 
+    
     return (
         <div className="d-flex justify-content-center align-items-center">
+       
             <form className="form" onSubmit={handleSubmit}>
+            {isValid && <Alert style={alertStyle} variant="danger">Invalid Credentials! Try again</Alert>}
+           <p className="title-text"> Login </p>
                 <Field ref={usernameRef} label="Username:" type="text" />
                 <Field ref={passwordRef} label="Password:" type="password" />
                 <div>

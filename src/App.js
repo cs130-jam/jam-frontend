@@ -20,12 +20,23 @@ const fullHeight = {
     margin: "0px"
 }
 
+const footerStyle = {
+  //padding: '1rem',
+  //background: 'rgb(235, 195, 64)',
+  position: 'fixed',
+  bottom: '0',
+  width: '100%'
+  
+};
+
 function App() {
     // const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
 
     return (
-        <div className="container-fluid g-0" style={fullHeight}>
-            <Header className="row"/>
+        <div >
+           <Header />
+          <div className="container-fluid g-0" style={fullHeight}>
+        
             <BrowserRouter>
                 <div className="row" style={contentStyle}>
                     <Switch>
@@ -46,7 +57,14 @@ function App() {
                         </Route>
                     </Switch>
                 </div>
-                <Footer className="row"/>
+                </BrowserRouter>
+              
+                </div>
+                <BrowserRouter>
+  
+                <div>
+                <Footer />
+                </div>
             </BrowserRouter>
         </div>
     );
