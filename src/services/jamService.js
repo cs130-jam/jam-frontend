@@ -77,6 +77,19 @@ class JamAPIService {
         return fetch(API_CALL_URL("user", "choices", "instruments"));
     }
 
+    findArtists(query, page) {
+        return fetch(API_QUERY_PARAMS(API_CALL_URL("artist", "search"), {
+            "artist": query,
+            "page": page
+        }),
+        {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            },
+        });
+    }
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",

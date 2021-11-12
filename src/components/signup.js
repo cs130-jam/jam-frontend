@@ -1,128 +1,22 @@
-/*import React from 'react';
-import ReactDOM from 'react-dom';
-
-const appStyle = {
-    height: '250px',
-    display: 'flex'
-};
-
-const formStyle = {
-    margin: '100px 500px 100px 550px',
-    padding: '30px 30px 30px 30px',
-    border: '1px solid #c9c9c9',
-    borderRadius: '5px',
-    background: '#f5f5f5',
-    height: '300px',
-    width: '400px',
-    display: 'block'
-};
-
-const labelStyle = {
-    margin: '10px 0 5px 0',
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    fontSize: '15px',
-};
-
-const inputStyle = {
-    margin: '5px 0 10px 0',
-    padding: '5px', 
-    border: '1px solid #bfbfbf',
-    borderRadius: '3px',
-    boxSizing: 'border-box',
-    width: '100%'
-};
-
-const submitStyle = {
-    margin: '10px 0 0 0',
-    padding: '7px 10px',
-    border: '1px solid #efffff',
-    borderRadius: '3px',
-    background: '#3085d6',
-    width: '100%', 
-    fontSize: '15px',
-    color: 'white',
-    display: 'block'
-};
-
-const Field = React.forwardRef(({label, type}, ref) => {
-    return (
-      <div>
-        <label style={labelStyle} >{label}</label>
-        <input ref={ref} type={type} style={inputStyle} />
-      </div>
-    );
-});
-
-const Form = ({onSubmit}) => {
-  console.log("hi1");
-    const firstnameRef = React.useRef();
-    const lastnameRef = React.useRef();
-    const emailRef = React.useRef();
-    const passwordRef = React.useRef();
-    const confirmpasswordRef = React.useRef();
-    const handleSubmit = e => {
-        e.preventDefault();
-        const data = {
-            firstname: firstnameRef.current.value,
-            lastname: lastnameRef.current.value,
-            email: emailRef.current.value,
-            password: passwordRef.current.value,
-            confirmpassword: confirmpasswordRef.current.value
-        };
-        console.log("hi2"); 
-        console.log(data);
-        onSubmit(data);
-    };
-    return (
-      <form style={formStyle} onSubmit={handleSubmit} >
-        <Field ref={firstnameRef} label="First Name:" type="text" />
-        <Field ref={lastnameRef} label="Last Name:" type=" text" />
-        <Field ref={emailRef} label="Email Address:" type=" text" />
-        <Field ref={passwordRef} label="Password:" type="password" />
-        <Field ref={confirmpasswordRef} label="Password:" type="password" />
-        <div>
-          <button style={submitStyle} type="submit">Submit</button>
-        </div>
-      </form>
-    );
-};
-
-// Usage example:
-
-const SignUp = () => {
-  console.log("hi3");
-    const handleSubmit = data => {
-        const json = JSON.stringify(data, null, 4);
-        //console.clear();
-        console.log("hi4");
-        console.log(json);
-    };
-    return (
-      <div style={appStyle}>
-        <Form onSubmit={handleSubmit} />
-      </div>
-    );
-};
-
-export default SignUp;*/
-
 import React, {useEffect, useRef, useState} from 'react';
 import '../App.css';
 import InputField from '../util/inputField';
 import useInterval from '../util/useInterval';
 import ErrorInputField from '../util/errorInputField';
 import DropdownField from '../util/dropdownField';
+import { Alert } from 'react-bootstrap';
 
 const CHECK_USERNAME_DELAY = 2000; // every 2 seconds
+const ARTIST_SEARCH_DELAY = 1000; // every second
+const MIN_ARTIST_SEARCH_LEN = 2;
 
-const Field = React.forwardRef(({label, type}, ref) => {
-    return (
-        <div>
-            <label className="jam-form-label">{label}</label>
-            <input className="jam-form-input" ref={ref} type={type} />
-        </div>
-    );
-});
+function matchingPrefixIgnoreCase(prefix, entries) {
+    prefix = prefix.toLowerCase();
+    return entries.filter(entry => {
+        const compareLength = Math.min(prefix.length, entry.length);
+        return prefix.substring(0, compareLength) === entry.substring(0, compareLength).toLowerCase();
+    });
+}
 
 const instrumentsListStyle = {
     margin: "0px",
@@ -130,9 +24,38 @@ const instrumentsListStyle = {
     listStyleType: "none"
 }
 
+const artistContainer = {
+    height: "60px",
+    position: "relative"
+}
+
+const artistImageStyle = {
+    width: "60px",
+    height: "60px",
+    borderRadius: "3px"
+}
+
+const artistNameStyle = {
+    fontSize: "18pt",
+    position: "absolute",
+    top: "15px",
+    left: "70px"
+}
+
+const artistButtonStyle = {
+    marginTop: "18px",
+    marginRight: "-10px"
+}
+
+const alertStyle = {
+    top: '0'
+};
+
 const SignUp = (props) => {
     const setSessionToken = props.setSessionToken;
     const apiService = props.apiService;
+    const [isValidInterests, setIsValidInterests] = useState(true); 
+    const [failMessage, setFailMessage] = useState("");
 
     const [isValidUsername, setIsValidUsername] = useState(true);
     const [username, setUsername] = useState("");
@@ -148,7 +71,12 @@ const SignUp = (props) => {
     const [knownInstruments, setKnownInstruments] = useState([]);
     const [instQuery, setInstQuery] = useState("");
 
-    const [pageIndex, setPageIndex] = useState(2);
+    const [cachedSearches, setCachedSearches] = useState({});
+    const [artistQueryResults, setArtistQueryResults] = useState([]);
+    const [artistQuery, setArtistQuery] = useState("");
+    const [artists, setArtists] = useState([]);
+
+    const [pageIndex, setPageIndex] = useState(0);
 
     async function checkUsername() {
         if (username === lastUsername.current) return isValidUsername;
@@ -187,11 +115,7 @@ const SignUp = (props) => {
     }
 
     function getFilteredInstruments(query) {
-        query = query.toLowerCase();
-        return instruments.filter(instrument => {
-            const compareLength = Math.min(query.length, instrument.length);
-            return query.substring(0, compareLength) === instrument.substring(0, compareLength).toLowerCase();
-        })
+        return matchingPrefixIgnoreCase(query, instruments);
     }
     useEffect(() => {
         setFilteredInstruments(getFilteredInstruments(instQuery));
@@ -210,27 +134,123 @@ const SignUp = (props) => {
     useEffect(() => getInstruments(), []);
 
     function removeInstrument(instrument) {
-        setKnownInstruments(knownInstruments.filter(filteredInstrument => filteredInstrument != instrument));
+        setKnownInstruments(knownInstruments.filter(filteredInstrument => filteredInstrument !== instrument));
     }
 
     function instrumentsDone() {
         setPageIndex(pageIndex + 1);
     }
 
-    // const handleSubmit = e => {
-    //     e.preventDefault();
-    //     const data = {
-    //         firstname: firstnameRef.current.value,
-    //         lastname: lastnameRef.current.value,
-    //         username: usernameRef.current.value,
-    //         password: passwordRef.current.value
-    //     };
+    useInterval(() => {
+        let cached = cachedSearches[artistQuery];
+        getArtistsForQuery(artistQuery, cached ? cached.wantedCount : 10, {...cachedSearches});
+    }, ARTIST_SEARCH_DELAY);
 
-    //     console.log(data);
-    //     JamAPIService.signup(data).then((res)=> {
-    //         console.log(res); 
-    //     });
-    // };
+
+    async function getArtistsForQuery(query, wantedCount, cachedSearches) {
+        if (query.length <= MIN_ARTIST_SEARCH_LEN) return null;
+
+        let cached = cachedSearches[query];
+
+        if (cached && cached.wantedCount !== wantedCount) {
+            cached.wantedCount = wantedCount;
+            setCachedSearches(cachedSearches);
+        }
+        if (cached && cached.responses.length >= wantedCount) return;
+        if (cached && cached.page === cached.totalPages) return;
+
+        let page = cached ? cached.page + 1 : 1;
+        let response = await apiService.current.findArtists(query, page);
+        let json = await response.json();
+        if (!cached) {
+            cachedSearches[query] = {
+                "page": page,
+                "totalPages": json.totalPages,
+                "responses": json.responses,
+                "wantedCount": wantedCount
+            };
+            cached = cachedSearches[query];
+        } else {
+            cached.page = page;
+            cached.totalPages = json.totalPages;
+            cached.responses = [...cached.responses, json.responses];
+        }
+
+        if (cached.responses.lenth < wantedCount) {
+            getArtistsForQuery(query, wantedCount, cachedSearches);
+        } else {
+            setCachedSearches(cachedSearches);
+        }
+    }
+
+    function onArtistSelect(entry) {
+        if (artists.length >= 2) setIsValidInterests(true);
+        setArtists([...artists, entry.content]);
+    }
+
+    useEffect(() => {
+        let cached = cachedSearches[artistQuery];
+        if (!cached) {
+            setArtistQueryResults([]);
+            return;
+        }
+
+        setArtistQueryResults(cached.responses.slice(0, cached.wantedCount).map(response => {
+            return {
+                "html": (
+                    <div style={artistContainer}>
+                        <img style={artistImageStyle} src={response.thumb}/>
+                        <div style={artistNameStyle}>{response.name}</div>
+                    </div>
+                    ),
+                "content": response
+            };
+        }));
+    }, [artistQuery, cachedSearches]);
+
+    function moreEntries() {
+        let cached = cachedSearches[artistQuery];
+        if (!cached) return;
+
+        getArtistsForQuery(artistQuery, cached.wantedCount + 10, {...cachedSearches});
+    }
+
+    function removeArtist(removeEntry) {
+        setArtists(artists.filter(artist => artist.path !== removeEntry.path));
+    }
+
+    async function createAccount() {
+        if (artists.length < 3) {
+            setIsValidInterests(false);
+            return;
+        }
+
+        let response = await apiService.current.signup({
+            "username": username,
+            "password": password,
+            "firstName": firstName,
+            "lastName": lastName,
+            "location": {
+                "longitude": "100",
+                "latitude": "100"
+            },
+            "musicInterests": artists.map(artist => {
+                return {"name": artist.name, "path": artist.path}
+            }),
+            "instruments": knownInstruments
+        });
+        if (response.ok) {
+            let json = await response.json();
+            setSessionToken(json.token);
+        } else {
+            let error = await response.json();
+            if (error.status === 400) {
+                setFailMessage(error.message);
+            } else {
+                console.log(error);
+            }
+        }
+    }
 
     const pages = [
         (
@@ -290,7 +310,7 @@ const SignUp = (props) => {
                 <DropdownField 
                     value={instQuery}
                     onInput={setInstQuery}
-                    label="Known Instruments:" 
+                    label="Add Known Instruments:" 
                     type="text"
                     hasMore={false}
                     onSelect={onInstrumentSelect}
@@ -319,21 +339,38 @@ const SignUp = (props) => {
         ),
         (
             <div className="container-fluid g-0">
+                {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
+                {failMessage.length > 0 && <Alert style={alertStyle} variant="danger">{failMessage}</Alert>}
                 <p className="jam-title-text">Sign Up</p>
-                <label htmlFor="artist-search" className="jam-form-label">
-                    <span >Add Favourite Artists</span>
-                </label>
-                <br/>
-                <input
+                <DropdownField 
+                    value={artistQuery}
+                    onInput={setArtistQuery}
+                    label="Add Favorite Artists:" 
                     type="text"
-                    id="artist-search"
-                    placeholder="artists"
-                    name="s" 
-                />
-                <button type="submit">Search</button>
-                <div>
-                    <button className="submit-button" type="submit">Submit</button>
-                </div> 
+                    hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
+                    onMore={moreEntries}
+                    onSelect={onArtistSelect}
+                    entries={artistQueryResults}/>
+                <ul style={instrumentsListStyle}>
+                    {artists.map(artist => (
+                        <li className="removable-list-entry" key={artist.path}>
+                            <div style={artistContainer}>
+                                <img style={artistImageStyle} src={artist.thumb}/>
+                                <div style={artistNameStyle}>{artist.name}</div>
+                                <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+                <div className="row g-0">
+                    <div className="col-4">
+                        <button className="jam-submit-button" onClick={prevPage}>Back</button>
+                    </div>
+                    <div className="col-4"></div>
+                    <div className="col-4">
+                        <button className="jam-submit-button" onClick={createAccount}>Create Account</button>
+                    </div>  
+                </div>
             </div> 
         )
     ];

@@ -38,12 +38,12 @@ const DropdownField = (props) => {
                 onSelect(entries[selectedIndex]);
                 onInput("");
                 inputElem.current.blur();
+                setSelectedIndex(-1);
             } else if (selectedIndex === entries.length) {
                 onMore();
             } else {
                 inputElem.current.blur();
             }
-            setSelectedIndex(-1);
         } 
     }
 
@@ -102,6 +102,7 @@ const DropdownField = (props) => {
                             onMouseDown={moreSelected} 
                             className={selectedIndex === entries.length ? "selected" : ""} 
                             {...liProps(entries.length)}
+                            key={entries.length}
                         ><b>Show more...</b></li> 
                         : false}
                 </ul> : <div></div>}

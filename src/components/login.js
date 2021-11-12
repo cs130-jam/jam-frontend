@@ -22,19 +22,14 @@ const Login = (props) => {
     const [password, setPassword] = useState("");
 
     async function handleLogin(loginData) {
-        console.log(loginData);
-        if(loginData.password == "wrong") {
-            setIsInvalid(true);
-        }
-
         let response = await apiService.current.login(loginData);
         if (response.ok) {
             let json = await response.json();
             setSessionToken(json.token);
         } else {
             let error = await response.json();
-            if (error.status == 401) {
-                alert("Invalid username or password");
+            if (error.status === 401) {
+                setIsInvalid(true);
             } else {
                 console.log(error);
             }
