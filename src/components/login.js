@@ -5,12 +5,17 @@ import Alert from 'react-bootstrap/Alert'
 import InputField from '../util/inputField';
 
 const linkStyle = {
-    color: 'black',
-    margin: '110px'
+    color: 'black'
+};
+
+const linkContainer = {
+    textAlign: "center",
+    width: "100%",
+    display: "inline-block",
 };
 
 const alertStyle = {
-  top: '0'
+    top: '0'
 };
 
 const Login = (props) => {
@@ -58,13 +63,15 @@ const Login = (props) => {
         <div className="d-flex justify-content-center align-items-center">
             <form className="jam-form" onSubmit={handleSubmit}>
                 {isInvalid && <Alert style={alertStyle} variant="danger">Invalid Credentials! Try again</Alert>}
-                <p className="jam-title-text"> Login </p>
+                <p className="jam-title-text">Login</p>
                 <InputField label="Username: " type="text" value={username} onInput={onUsername}/>
                 <InputField label="Password: " type="password" value={password} onInput={onPassword}/>
                 <div>
                     <button className="jam-submit-button" type="submit">Submit</button>
                 </div>
-                <Link style={linkStyle} to="/sign-up">Create Account</Link>
+                <div style={linkContainer}>
+                    <Link style={linkStyle} to="/sign-up">Create Account</Link>
+                </div>
             </form>
         </div>
     );
