@@ -225,14 +225,18 @@ const SignUp = (props) => {
             return;
         }
 
+        let locationPromise = new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(pos => resolve(pos), error => reject(error));
+        });
+        let location = await locationPromise;
         let response = await apiService.current.signup({
             "username": username,
             "password": password,
             "firstName": firstName,
             "lastName": lastName,
             "location": {
-                "longitude": "100",
-                "latitude": "100"
+                "longitude": location.coords.longitude.toString(),
+                "latitude": location.coords.latitude.toString()
             },
             "musicInterests": artists.map(artist => {
                 return {"name": artist.name, "path": artist.path}
