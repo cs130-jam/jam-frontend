@@ -7,6 +7,7 @@ import SignUp from './components/signup';
 import Navbar from './components/Navbar';
 import AboutUs from './components/aboutUs';
 import ContactUs from './components/contactUs';
+import FindFriend from './components/findFriend';
 import PrivacyPolicy from './components/privacyPolicy';
 import useCookie from './util/useCookie';
 import { useRef } from 'react';
@@ -44,6 +45,9 @@ function App() {
                         </Route>
                         <Route path="/contact-us">
                             <ContactUs />
+                        </Route>
+                        <Route path="/findfriend">
+                            <FindFriend />
                         </Route>
                     </Switch>
                 </div>
