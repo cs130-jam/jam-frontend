@@ -11,6 +11,7 @@ import PrivacyPolicy from './components/privacyPolicy';
 import useCookie from './util/useCookie';
 import { useRef } from 'react';
 import JamAPIService from './services/jamService';
+import FileUpload from './util/imageUpload';
 
 const SESSION_TOKEN_KEY = "session-token";
 
@@ -44,6 +45,11 @@ function App() {
                         </Route>
                         <Route path="/contact-us">
                             <ContactUs />
+                        </Route>
+                        <Route path="/test-upload">
+                            <FileUpload 
+                                postUpload={apiService.current.uploadPfp.bind(apiService.current)}
+                                getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
                         </Route>
                     </Switch>
                 </div>
