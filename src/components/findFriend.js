@@ -7,11 +7,16 @@ const button={
     cursor: 'pointer',
     border: '1px solid #1a202c',
     padding: '8px',
-    minWidth: '64px',
+    width: '100px',
 
     background: 'rgb(48, 133, 214)',
 
     transition: 'all 0.1s ease-in',
+    
+    
+  borderRadius: '5px',
+  margin: '10px 10px'
+
   }
 
 
@@ -19,26 +24,73 @@ const button={
     textAlign: "center",
   }
 
+  const StyledTable = {
+    
+    margin: "auto"
+  
+  }
+
+  const nameStyle = {
+    color: "black",
+    fontSize:"100px",
+    margin: '0px',
+    fontFamily: "lato"
+  };
+
+  const bioStyle = {
+    color: "black",
+    fontSize:"40px",
+    fontStyle:"italic",
+    fontFamily: "lato"
+  };
+
+  const jobStyle = {
+    color: "black",
+    fontSize:"30px",
+    
+    fontFamily: "lato"
+  };
+
+
 const users = [
     {
         profile:{
-      name: 'Charlie',
-      job: 'Janitor',
+      firstName: 'Charlie',
+      lastName:'Chap'
                 },
+    instruments: ['guitar','drums'],            
     bio:"this is my bio"
     },
     {profile:{
-      name: 'Mac',
-      job: 'Bouncer',
+      firstName: 'Mac',
+      lastName: 'Musk'
     },
+    instruments: ['Sitar','Piano'],
     bio: "this is mac's bio"
     },
+
+    {profile:{
+        firstName: 'Andrew',
+        lastName: 'Cummings'
+      },
+      instruments: ['guitar','drums','guitar','drums','guitar','drums'],
+      bio: "this is Andrew's bio"
+      },
+
+      {profile:{
+        firstName: 'Keerthi',
+        lastName: 'Sri'
+        
+      },
+      instruments: ['sings'],
+      bio: "this is K's bio"
+      },
     
   ];
 const FindFriend = () => {
     
     
-    const [buttonText, setButtonText] = useState("Send Request"); //same as creating your state variable where "Next" is the default value for buttonText and setButtonText is the setter function for your state variable instead of setState
+    const [buttonText, setButtonText] = useState("Yes"); //same as creating your state variable where "Next" is the default value for buttonText and setButtonText is the setter function for your state variable instead of setState
     const [selected, setSelected] = useState(0);
     
 
@@ -58,30 +110,30 @@ const FindFriend = () => {
 
     return (
         <div>
-            <h2 className="text-center">Suggestions</h2>
+            
             
                 
 
                     
                     
                     
-                            <div className="text-center">{users[selected].profile.name}</div>
+                            <div style = {nameStyle} className="text-center">{users[selected].profile.firstName} {users[selected].profile.lastName}</div>
                             
 
                     
 
                     
                            
-                            <div>{users[selected].profile.job}</div>
+                            <div style = {jobStyle} className="text-center">{users[selected].instruments.join(" ")}</div>
                             
 
                    
                            
-                            <div>{users[selected].bio}</div>
+                            <div style = {bioStyle} className="text-center">{users[selected].bio}</div>
                             
 
                     
-                         <table className = "jam-title-text">   
+                         <table style = {StyledTable}>   
                             <tr>
                             <td><button style = {button} onClick={handleAssigneeOnClick }>{buttonText}</button> </td>
                             <td><button style = {button} onClick={handleAssigneeOnClick }>NO</button></td>
