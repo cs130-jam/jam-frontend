@@ -2,7 +2,7 @@ const API_BASE_URL = "http://localhost/api/";
 
 const API_CALL_URL = (...path) => API_BASE_URL + path.join("/");
 const API_QUERY_PARAMS = (url, params) => url + "?" + new URLSearchParams(params);
-
+const SESSION_TOKEN_KEY = "session-token";
 
 // import { apiUrl } from './util/request';
 // import useCookie from './util/useCookie';
@@ -90,12 +90,38 @@ class JamAPIService {
         });
     }
 
+    getSupportedPfpFormats() {
+        return fetch(API_CALL_URL("upload", "supported"));
+    }
+
+    uploadPfp(pfpForm) {
+        return this.apiRequest(API_CALL_URL("upload"), {
+            method: "POST",
+            body: pfpForm
+        })
+    }
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             },
+        });
+    }
+
+    apiRequest(url, info) {
+        const headersWithToken = "headers" in info ? info.headers : {};
+        headersWithToken[SESSION_TOKEN_KEY] = this.sessionToken;
+        info.headers = headersWithToken;
+
+        return fetch(url, info).then(res => {
+            if (res.ok) {
+                return res;
+            } else {
+                if (res.status === 401) this.removeSessionToken();
+                return Promise.reject(res);
+            }
         });
     }
 }
