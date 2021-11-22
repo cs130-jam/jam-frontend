@@ -45,6 +45,49 @@ class JamAPIService {
         this.sessionToken = sessionToken;
     }
 
+    getUser(userId){
+        return fetch(API_CALL_URL("user", userId),{
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
+    rejectMatch(userId){
+        return this.apiRequest(API_CALL_URL("match","reject"), {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"userId":userId})
+           
+        })
+    }
+
+    acceptMatch(userId){
+        return this.apiRequest(API_CALL_URL("match","accept"), {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"userId":userId})
+           
+        })
+    }
+
+    getRec(){
+        return this.apiRequest(API_CALL_URL("match"), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+           
+        });
+
+    }
+
     login(data) {
         return fetch(API_CALL_URL("internal", "login"), {
             method: "POST",

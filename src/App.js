@@ -52,8 +52,9 @@ function App() {
                                 postUpload={apiService.current.uploadPfp.bind(apiService.current)}
                                 getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
                         </Route>
-                        <Route path="/findfriend">
-                            <FindFriend />
+                        <Route path="/findfriend" >
+
+                            <FindFriend apiService = {apiService}/>
                         </Route>
                     </Switch>
                 </div>
