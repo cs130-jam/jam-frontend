@@ -112,6 +112,7 @@ const FindFriend = (props) => {
 
     async function loadUser(){
         let response = await apiService.current.getRec();
+        
         let json = await response.json();
         let recuserId = json.userId ;
         let userResponse = await apiService.current.getUser(recuserId);
@@ -131,7 +132,8 @@ const FindFriend = (props) => {
                 
 
                     
-                    
+                            
+                            
                     
                             <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
                             

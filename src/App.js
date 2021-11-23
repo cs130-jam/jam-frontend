@@ -13,6 +13,7 @@ import useCookie from './util/useCookie';
 import { useRef } from 'react';
 import JamAPIService from './services/jamService';
 import FileUpload from './util/imageUpload';
+import ViewFriends from './components/viewFriends';
 
 const SESSION_TOKEN_KEY = "session-token";
 
@@ -23,7 +24,8 @@ const contentStyle = {
 function App() {
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
     const apiService = useRef(new JamAPIService(sessionToken, removeSessionToken));
-
+    var myArray = ['something','hello'];
+    
     return (
         <div >
            <Header />
@@ -51,6 +53,11 @@ function App() {
                             <FileUpload 
                                 postUpload={apiService.current.uploadPfp.bind(apiService.current)}
                                 getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
+                        </Route>
+
+                        <Route path="/viewfriends" >
+
+                            <ViewFriends someprop = {myArray}/>
                         </Route>
                         <Route path="/findfriend" >
 
