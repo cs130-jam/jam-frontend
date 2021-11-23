@@ -13,9 +13,13 @@ import PrivacyPolicy from './components/privacyPolicy';
 import useCookie from './util/useCookie';
 //import { useRef } from 'react';
 import JamAPIService from './services/jamService';
+<<<<<<< HEAD
 //import { useLocation } from 'react-router-dom'
 //import SideNavPage from './components/sideNavBar';
 import {withRouter} from 'react-router-dom';
+=======
+import FileUpload from './util/imageUpload';
+>>>>>>> 1753da33e2cbe21aa1164487b632faa867c9f455
 
 const SESSION_TOKEN_KEY = "session-token";
 
@@ -83,9 +87,20 @@ function App() {
                         <Route path="/contact-us">
                             <ContactUs />
                         </Route>
+<<<<<<< HEAD
                     
                         <Route path="/find-friend">
                             <FindFriend />
+=======
+                        <Route path="/test-upload">
+                            <FileUpload 
+                                postUpload={apiService.current.uploadPfp.bind(apiService.current)}
+                                getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
+                        </Route>
+                        <Route path="/findfriend" >
+
+                            <FindFriend apiService = {apiService}/>
+>>>>>>> 1753da33e2cbe21aa1164487b632faa867c9f455
                         </Route>
                     </Switch>
                 </div>
