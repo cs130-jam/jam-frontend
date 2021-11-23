@@ -50,33 +50,74 @@ const button={
     
     fontFamily: "lato"
   };
+  
 
 
+  const friends = [
+    {
+        profile:{
+      firstName: 'Charlie',
+      lastName:'Chap'
+                },
+    instruments: ['guitar','drums'],            
+    bio:"this is my bio"
+    },
+    {profile:{
+      firstName: 'Mac',
+      lastName: 'Musk'
+    },
+    instruments: ['Sitar','Piano'],
+    bio: "this is mac's bio"
+    },
+    {profile:{
+        firstName: 'Andrew',
+        lastName: 'Cummings'
+      },
+      instruments: ['guitar','drums','guitar','drums','guitar','drums'],
+      bio: "this is Andrew's bio"
+      },
+
+      {profile:{
+        firstName: 'Keerthi',
+        lastName: 'Sri'
+        
+      },
+      instruments: ['sings'],
+      bio: "this is K's bio"
+      },
+    
+  ];
 
   function ViewFriends(props) {
     
-    console.log(props.someprop[0])
+    const [user, setUsers] = useState(friends);
 
 
     
 
     return (
         <div className="container">
-            <h3 className="p-3 text-center">Your Friends</h3>
-            <table className="table table-striped table-bordered">
+            <h3 className="p-3 text-center">My Friends</h3>
+            <table className="table table-striped table-bordered" style = {StyledTable}>
                 <thead>
                     <tr>
-                        <th>{props.someprop[0]}</th>
-                        <th>Email</th>
-                        <th>Role</th>
+                        <th>Name</th>
+                        <th>instruments</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    
-                                           </tbody>
-                                       </table>
-                                   </div>
-                               );
+                    {user && user.map(user =>
+                        <tr >
+                            <td>{user.profile.firstName} {user.profile.lastName}</td>
+                            <td>{user.instruments.join(" ")}</td>
+                            <td><button style = {button}>Message</button></td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
                            }
                            
                            export default ViewFriends;
