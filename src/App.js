@@ -13,6 +13,7 @@ import PrivacyPolicy from './components/privacyPolicy';
 import useCookie from './util/useCookie';
 import JamAPIService from './services/jamService';
 import FileUpload from './util/imageUpload';
+import ViewFriends from './components/viewFriends';
 
 
 const SESSION_TOKEN_KEY = "session-token";
@@ -30,7 +31,8 @@ const findFindStyle = {
 function App() {
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
     const apiService = useRef(new JamAPIService(sessionToken, removeSessionToken));
-
+    var myArray = ['something','hello'];
+    
     return (
 
  
@@ -66,6 +68,13 @@ function App() {
                                 getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
                         </Route>
                         <Route path="/find-friend" >
+                        <FindFriend apiService = {apiService}/>
+                        </Route>
+                        <Route path="/viewfriends" >
+
+                            <ViewFriends someprop = {myArray}/>
+                        </Route>
+                        <Route path="/findfriend" >
 
                             <FindFriend apiService = {apiService}/>
 
