@@ -1,7 +1,8 @@
 import React, {useState, useRef,useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import '../App.css';
-
+import classNames from 'classnames';
+import styles from './button.css';
 
 const button={
     cursor: 'pointer',
@@ -91,7 +92,9 @@ const button={
   function ViewFriends(props) {
     
     const [user, setUsers] = useState(friends);
+    const [animate, setAnimate] = useState(false);
 
+    const handleClick = () => setAnimate(!animate);
 
     
 
@@ -111,7 +114,11 @@ const button={
                         <tr >
                             <td>{user.profile.firstName} {user.profile.lastName}</td>
                             <td>{user.instruments.join(" ")}</td>
-                            <td><button style = {button}>Message</button></td>
+                            <td><button  onClick={handleClick}
+      className={classNames(
+        styles.animate,
+        animate && styles.grow
+      )} >Message</button></td>
                         </tr>
                     )}
                 </tbody>
