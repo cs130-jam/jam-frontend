@@ -110,6 +110,15 @@ class JamAPIService {
         });
     }
 
+    getChatRoomDetails(roomID) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomID), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
     apiRequest(url, info) {
         const headersWithToken = "headers" in info ? info.headers : {};
         headersWithToken[SESSION_TOKEN_KEY] = this.sessionToken;

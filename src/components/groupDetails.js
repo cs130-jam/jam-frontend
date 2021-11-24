@@ -8,24 +8,61 @@ const GroupDetails = (props) =>
 {
     //api service needed to view gc details
     const apiService = props.apiService;
+    const roomID = props.roomID;
 
-    const [groupDetails, setGroupDetails] = useState("");
+    const [groupName, setGroupName] = useState("");
+    const [groupDetails, setGroupDetails] = useState({});
     const [loaded, setLoaded] = useState(false);
+    const lastGroupDetails = useRef("");
+    const lastGroupName = useRef("");
     
     async function fetchGroupDetails()
     {
-        setGroupDetails(
+        let response = await apiService.current.getChatRoomDetails(roomID);
+        if(!response.ok)
         {
-            "id": "Cum",
-            "members": ["Cum1", "Cum2", "Cum3", "Cum4"], // list of user UUIDs
-            "updated": 0, // milliseconds since epoch
-            "isDirectMessage": false,
-            "info": {
-                "name": "CuSandwich",
-                "topic": "Cum Snad Witch"
-            }
-        });
+            /*Return Group not found in big letters*/
+            return (
+                <p>
+                <center>
+                    Error. Group Not Found.
+                </center>
+                </p>
+            );
+        }
+
+        let json = await response.json();
+        setGroupDetails(json);
         setLoaded(true);
+    }
+
+    async function updateGroupDetails()
+    {
+        let response = await apiService.current.setGroupDetails(groupDetails);
+        lastGroupDetails.current = groupDetails;
+        return;
+    }
+
+    async function updateGroupName()
+    {
+        let response = await apiService.current.setGroupName(groupName);
+        lastGroupName.current = groupName;
+        return;
+    }
+
+    async function viewProfile()
+    {
+        return;
+    }
+
+    async function inviteMember()
+    {
+        return;
+    }
+
+    async function leaveGroup()
+    {
+        return;
     }
 
     const groupNameStyle = {
@@ -47,15 +84,21 @@ const GroupDetails = (props) =>
         <p>
             <center>
             Group Name: 
-            {groupDetails.info.name}
-            <button class="edit-btn edit-btn1"><i class="icon-pencil"></i>Edit</button>
+            <InputField value={groupName} onInput={setGroupName} label="groupName:" type="groupName" />
+            <button class="edit-btn edit-btn1" onClick={updateGroupName}>Save</button>
             </center>
         </p>
         <p>
             <center>
             Group Details: 
-            {groupDetails.info.topic}
-            <button class="edit-btn edit-btn1">Edit</button>
+            <InputField value={groupDetails} onInput={setGroupDetails} label="groupDetails:" type="groupDetails" />
+            <button class="edit-btn edit-btn1" onClick={updateGroupDetails}>Save</button>
+            </center>
+        </p>
+        <p>
+            <center>
+            <button class="edit-btn edit-btn1" onClick={inviteMember}>Invite Members</button>
+            <button class="edit-btn edit-btn1" onClick={leaveGroup}>Leave Group</button>
             </center>
         </p>
         <p>
@@ -65,7 +108,7 @@ const GroupDetails = (props) =>
                 {groupDetails.members.map(members => (
                     <li className="member-entry" key={members}>
                         <span>{members}</span>
-                        <button class="edit-btn edit-btn1">View Profile</button>
+                        <button class="edit-btn edit-btn1" onClick={viewProfile}>View Profile</button>
                         <button class="edit-btn edit-btn1">Remove Member</button>
                     </li>
                 ))}
