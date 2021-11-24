@@ -4,7 +4,8 @@ import {Link} from 'react-router-dom';
 const footerStyle = {
     padding: '1rem',
     width: '100%',
-    backgroundColor: "rgb(248, 248, 248)"
+    backgroundColor: "rgb(252, 252, 252)",
+    borderTop: "1px solid rgba(0, 0, 0, 0.08)"
 };
 
 const lineStyle = {
