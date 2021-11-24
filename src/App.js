@@ -14,7 +14,7 @@ import useCookie from './util/useCookie';
 import JamAPIService from './services/jamService';
 import FileUpload from './util/imageUpload';
 import ViewFriends from './components/viewFriends';
-
+import Welcome from './components/welcome';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
@@ -32,11 +32,17 @@ function App() {
         <Header/>
         <div className="container-fluid g-0">
             <div style={contentStyle}>
+
                 <Navbar sessionToken={sessionToken}/>
+                
                 <div className="row" style={contentStyle}>
+                <Route path="/home">
+                            <Welcome/>
+                        </Route>
                     <Route path="/login">
                         <Login setSessionToken={setSessionToken} apiService={apiService}/>
                     </Route>
+
                     <Route path="/sign-up">
                         <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
                     </Route>
@@ -60,9 +66,11 @@ function App() {
                     <Route path="/viewfriends">
                         <ViewFriends someprop = {myArray}/>
                     </Route>
+                    
                 </div>
             </div>
         </div>
+        
         <Footer/>
     </Router>
     );
