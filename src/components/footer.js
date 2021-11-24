@@ -3,7 +3,8 @@ import {Link} from 'react-router-dom';
 
 const footerStyle = {
     padding: '1rem',
-    width: '100%'
+    width: '100%',
+    backgroundColor: "rgb(248, 248, 248)"
 };
 
 const lineStyle = {

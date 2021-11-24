@@ -15,18 +15,12 @@ import JamAPIService from './services/jamService';
 import FileUpload from './util/imageUpload';
 import ViewFriends from './components/viewFriends';
 
-
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    minHeight: "calc(100vh - 106px - 118px)" // values determined from header and footer height
+    minHeight: "calc(100vh - 106px - 118px)", // values determined from header and footer height
+    position: "relative"
 };
-
-const findFindStyle = {
-    justifyContent: 'centre',
-    alignItems: 'centre'
-};
-
 
 function App() {
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
@@ -34,63 +28,43 @@ function App() {
     var myArray = ['something','hello'];
     
     return (
-
- 
-        <div >
-           <Header />
-          <div className="container-fluid g-0">
-        
-            
-
-            <Router>
-            <Navbar />
+    <Router>
+        <Header/>
+        <div className="container-fluid g-0">
+            <div style={contentStyle}>
+                <Navbar sessionToken={sessionToken}/>
                 <div className="row" style={contentStyle}>
-                
-                    <Switch>
-                        <Route path="/login">
-                            <Login setSessionToken={setSessionToken} apiService={apiService}/>
-                        </Route>
-                        <Route path="/sign-up">
-                            <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
-                        </Route>
-                        <Route path="/about-us">
-                            <AboutUs />
-                        </Route>
-                        <Route path="/privacy-policy">
-                            <PrivacyPolicy />
-                        </Route>
-                        <Route path="/contact-us">
-                            <ContactUs />
-                        </Route>
-                        <Route path="/test-upload">
-                            <FileUpload 
-                                postUpload={apiService.current.uploadPfp.bind(apiService.current)}
-                                getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
-                        </Route>
-                        <Route path="/find-friend" >
+                    <Route path="/login">
+                        <Login setSessionToken={setSessionToken} apiService={apiService}/>
+                    </Route>
+                    <Route path="/sign-up">
+                        <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
+                    </Route>
+                    <Route path="/about-us">
+                        <AboutUs />
+                    </Route>
+                    <Route path="/privacy-policy">
+                        <PrivacyPolicy/>
+                    </Route>
+                    <Route path="/contact-us">
+                        <ContactUs/>
+                    </Route>
+                    <Route path="/test-upload">
+                        <FileUpload 
+                            postUpload={apiService.current.uploadPfp.bind(apiService.current)}
+                            getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
+                    </Route>
+                    <Route path="/find-friend">
                         <FindFriend apiService = {apiService}/>
-                        </Route>
-                        <Route path="/viewfriends" >
-
-                            <ViewFriends someprop = {myArray}/>
-                        </Route>
-                        <Route path="/findfriend" >
-
-                            <FindFriend apiService = {apiService}/>
-
-                        </Route>
-                    </Switch>
+                    </Route>
+                    <Route path="/viewfriends">
+                        <ViewFriends someprop = {myArray}/>
+                    </Route>
                 </div>
-                </Router>
-              
-                </div>
-                <Router>
-  
-                <div>
-                <Footer />
-                </div>
-            </Router>
+            </div>
         </div>
+        <Footer/>
+    </Router>
     );
 }
 
