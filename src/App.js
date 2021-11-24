@@ -14,7 +14,10 @@ import useCookie from './util/useCookie';
 import JamAPIService from './services/jamService';
 import FileUpload from './util/imageUpload';
 import ViewFriends from './components/viewFriends';
-
+//import VF from './components/test';
+import Welcome from './components/welcome';
+//import Intro from './components/test1';
+//import styles from './mystyle.module.css'; 
 
 const SESSION_TOKEN_KEY = "session-token";
 
@@ -27,7 +30,14 @@ const findFindStyle = {
     alignItems: 'centre'
 };
 
-
+const textalign =  {
+    margin: "auto",
+    textAlign: "center",
+    fontSize:"70px",
+    fontFamily: "lato",
+    color:"rgb(48, 133, 214)"
+    
+  };
 function App() {
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
     const apiService = useRef(new JamAPIService(sessionToken, removeSessionToken));
@@ -35,18 +45,22 @@ function App() {
     
     return (
 
- 
+        
         <div >
            <Header />
           <div className="container-fluid g-0">
-        
+          
             
-
+           
             <Router>
             <Navbar />
+            
+            
                 <div className="row" style={contentStyle}>
                 
                     <Switch>
+                        
+
                         <Route path="/login">
                             <Login setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
@@ -74,11 +88,18 @@ function App() {
 
                             <ViewFriends someprop = {myArray}/>
                         </Route>
+                        
+                        
                         <Route path="/findfriend" >
 
                             <FindFriend apiService = {apiService}/>
 
                         </Route>
+
+                        <Route path="/">
+                            <Welcome/>
+                        </Route>
+
                     </Switch>
                 </div>
                 </Router>
