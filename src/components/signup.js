@@ -90,7 +90,7 @@ const SignUp = (props) => {
     useInterval(checkUsername, CHECK_USERNAME_DELAY);
 
     async function userCredentials() {
-        if (password !== confirmPassword || password === "" || username === "") {
+        if (password !== confirmPassword || password === "" || username === "" || password.length < 8) {
             return;
         }
 
@@ -267,7 +267,13 @@ const SignUp = (props) => {
                     type="text" 
                     isError={!isValidUsername || username.length === 0} 
                     message={username.length === 0 ? "Username is required" : "Username taken"}/>
-                <InputField value={password} onInput={setPassword} label="Password:" type="password" />
+                <ErrorInputField 
+                    value={password}
+                    onInput={setPassword}
+                    label="Password: " 
+                    type="password" 
+                    isError={password.length < 8}
+                    message="Must be at least 8 characters"/>
                 <ErrorInputField 
                     value={confirmPassword}
                     onInput={setConfirmPassword}
