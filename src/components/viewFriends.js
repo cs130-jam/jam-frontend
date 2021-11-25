@@ -94,9 +94,9 @@ const button={
     const [selected, setSelected] = useState([]);
     const [loadeds, setLoadeds] = useState(false);
     async function loadUsers(){
-        let response = await apiService.current.getuserlist();
+        let response = await apiService.getuserlist();
         for(var i =0; i<response.length; i++){ 
-          let userResponse = await apiService.current.getUser(response[i]);
+          let userResponse = await apiService.getUser(response[i]);
           let userJson = await userResponse.json();
           setSelected(selected.concat(userJson));
         }

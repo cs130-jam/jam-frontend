@@ -1,6 +1,6 @@
 import './App.css';
-import React, { useRef} from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { useRef } from 'react';
+import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
 import Login from './components/login';
 import Header from './components/header';
 import Footer from './components/footer';
@@ -24,8 +24,9 @@ const contentStyle = {
 };
 
 function App() {
+    const history = useHistory();
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
-    const apiService = useRef(new JamAPIService(sessionToken, removeSessionToken));
+    const apiService = new JamAPIService(sessionToken, removeSessionToken, history);
     var myArray = ['something','hello'];
     
     return (
@@ -54,8 +55,8 @@ function App() {
                         </Route>
                         <Route path="/test-upload">
                             <FileUpload 
-                                postUpload={apiService.current.uploadPfp.bind(apiService.current)}
-                                getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
+                                postUpload={apiService.uploadPfp.bind(apiService)}
+                                getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
                         </Route>
                         <Route path="/find-friend">
                             <FindFriend apiService = {apiService}/>

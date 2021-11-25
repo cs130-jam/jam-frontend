@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 const Logout = (props) => {
-    const history = useHistory();
     const removeSessionToken = props.removeSessionToken;
+    const history = useHistory();
     useEffect(() => {
         removeSessionToken();
         history.push("/login");

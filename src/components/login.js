@@ -21,15 +21,15 @@ const alertStyle = {
 
 const Login = (props) => {
     const setSessionToken = props.setSessionToken;
-    const history = useHistory();
     const apiService = props.apiService;
     
+    const history = useHistory();
     const [isInvalid, setIsInvalid] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     async function handleLogin(loginData) {
-        let response = await apiService.current.login(loginData);
+        let response = await apiService.login(loginData);
         if (response.ok) {
             let json = await response.json();
             setSessionToken(json.token);

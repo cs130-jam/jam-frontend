@@ -95,21 +95,21 @@ const FindFriend = (props) => {
     const [loaded, setLoaded] = useState(false);
 
     async function rejectMatch(){
-        let response = await apiService.current.rejectMatch(selected.id);
+        let response = await apiService.rejectMatch(selected.id);
         if (!response.ok) return;
         loadUser();
         
     }
 
     async function acceptMatch(){
-        let response = await apiService.current.acceptMatch(selected.id);
+        let response = await apiService.acceptMatch(selected.id);
         if (!response.ok) return;
         loadUser();
         
     }
 
     async function loadUser(){
-        let response = await apiService.current.getRec();
+        let response = await apiService.getRec();
         if (!response.ok) {
           setLoaded(false);
           return;
@@ -117,7 +117,7 @@ const FindFriend = (props) => {
         let json = await response.json();
         let recuserId = json.userId;
 
-        let userResponse = await apiService.current.getUser(recuserId);
+        let userResponse = await apiService.getUser(recuserId);
         if (!userResponse.ok) {
           setLoaded(false);
           return;
