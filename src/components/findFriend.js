@@ -110,10 +110,18 @@ const FindFriend = (props) => {
 
     async function loadUser(){
         let response = await apiService.current.getRec();
-        if (!response.ok) return;
+        if (!response.ok) {
+          setLoaded(false);
+          return;
+        }
         let json = await response.json();
-        let recuserId = json.userId ;
+        let recuserId = json.userId;
+
         let userResponse = await apiService.current.getUser(recuserId);
+        if (!userResponse.ok) {
+          setLoaded(false);
+          return;
+        }
         let userJson = await userResponse.json();
         setSelected(userJson);
         setLoaded(true);
