@@ -18,7 +18,7 @@ const GroupDetails = (props) =>
     
     async function fetchGroupDetails()
     {
-        let response = await apiService.current.getChatRoomDetails(roomID);
+        let response = await apiService.getChatRoomDetails(roomID);
         if(!response.ok)
         {
             /*Return Group not found in big letters*/
@@ -38,14 +38,14 @@ const GroupDetails = (props) =>
 
     async function updateGroupDetails()
     {
-        let response = await apiService.current.setGroupDetails(groupDetails);
+        let response = await apiService.setGroupDetails(groupDetails);
         lastGroupDetails.current = groupDetails;
         return;
     }
 
     async function updateGroupName()
     {
-        let response = await apiService.current.setGroupName(groupName);
+        let response = await apiService.setGroupName(groupName);
         lastGroupName.current = groupName;
         return;
     }
