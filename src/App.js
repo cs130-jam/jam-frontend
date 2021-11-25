@@ -20,7 +20,7 @@ import Chatrooms from './components/chatrooms';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    minHeight: "calc(100vh - 106px - 118px)", // values determined from header and footer height
+    height: "calc(100vh - 106px - 118px)", // values determined from header and footer height
     position: "relative"
 };
 

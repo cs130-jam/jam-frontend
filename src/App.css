@@ -113,6 +113,27 @@
     text-align: center;
     vertical-align: middle;
 }
+
+.chatroom-entry {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    height: 60px;
+    padding: 14px 12px;
+    font-size: 16pt;
+    /* padding-bottom: 12px; */
+    /* padding-top: 16px; */
+}
+.chatroom-entry:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.chatroom-entry:hover {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.chatroom-entry span {
+    margin: 0px;
+}
+
 /*
 .heroimage {
     background-image: url("./test.JPG");
