@@ -22,10 +22,10 @@ function Navbar(props) {
             </Link>
         </IconContext.Provider>
         <IconContext.Provider value={{ color: '#FFF' }}>
-            <div className={'nav-menu ' + (sidebar ? 'active' : '')}>
+            <div className={'col-2 nav-menu ' + (sidebar ? 'active' : '')}>
                 <ul className='nav-menu-items'>
                     {SidebarData.map((item, index) => 
-                        <li key={index} className={item.cName}>
+                        <li key={index} className={item.cName} onClick={toggleSidebar}>
                             <Link to={item.path}>
                                 {item.icon}
                                 <span>{item.title}</span>
