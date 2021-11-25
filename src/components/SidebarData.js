@@ -7,6 +7,12 @@ const darkIcon = {
 
 export const SidebarData = [
   {
+    title: 'Update Profile',
+    path: '/update-profile',
+    icon: <FaIcons.FaHandPaper style={darkIcon}/>,
+    cName: 'nav-text'
+  },
+  {
     title: 'Suggestions',
     path: '/find-friend',
     icon: <FaIcons.FaHandPaper style={darkIcon}/>,
