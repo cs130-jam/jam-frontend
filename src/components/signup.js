@@ -178,7 +178,7 @@ const SignUp = (props) => {
             cached.responses = [...cached.responses, json.responses];
         }
 
-        if (cached.responses.lenth < wantedCount) {
+        if (cached.responses.length < wantedCount) {
             getArtistsForQuery(query, wantedCount, cachedSearches);
         } else {
             setCachedSearches(cachedSearches);
