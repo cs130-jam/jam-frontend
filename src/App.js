@@ -17,6 +17,7 @@ import ViewFriends from './components/viewFriends';
 import Welcome from './components/welcome';
 import Logout from './components/logout';
 import Chatrooms from './components/chatrooms';
+import UpdateProfile from './components/updateProfile';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
@@ -69,6 +70,9 @@ function App() {
                             <FileUpload 
                                 postUpload={apiService.uploadPfp.bind(apiService)}
                                 getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
+                        </Route>
+                        <Route path="/update-profile">
+                            <UpdateProfile apiService = {apiService}/>
                         </Route>
                         <Route path="/find-friend">
                             <FindFriend apiService = {apiService}/>
