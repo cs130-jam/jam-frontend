@@ -1,5 +1,6 @@
 import './App.css';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import React, { useRef } from 'react';
+import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
 import Login from './components/login';
 import Header from './components/header';
 import Footer from './components/footer';
@@ -10,67 +11,79 @@ import ContactUs from './components/contactUs';
 import FindFriend from './components/findFriend';
 import PrivacyPolicy from './components/privacyPolicy';
 import useCookie from './util/useCookie';
-import { useRef } from 'react';
 import JamAPIService from './services/jamService';
 import GroupDetails from './components/groupDetails';
 import FileUpload from './util/imageUpload';
-
+import ViewFriends from './components/viewFriends';
+import Welcome from './components/welcome';
+import Logout from './components/logout';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    minHeight: "calc(100vh - 106px - 118px)" // values determined from header and footer height
+    minHeight: "calc(100vh - 106px - 118px)", // values determined from header and footer height
+    position: "relative"
 };
 
 function App() {
+    const history = useHistory();
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
-    const apiService = useRef(new JamAPIService(sessionToken, removeSessionToken));
-
+    const apiService = new JamAPIService(sessionToken, removeSessionToken, history);
+    var myArray = ['something','hello'];
+    
     return (
-        <div >
-           <Header />
-          <div className="container-fluid g-0">
-        
-            <BrowserRouter>
+    <Router>
+        <Header/>
+        <div className="container-fluid g-0">
+            <div style={contentStyle}>
+                <Navbar sessionToken={sessionToken}/>
                 <div className="row" style={contentStyle}>
-                    <Switch>
-                        <Route path="/login">
-                            <Login setSessionToken={setSessionToken} apiService={apiService}/>
+                    {sessionToken != null && sessionToken.length > 0 
+                    ? <>
+                        <Route path="/home">
+                            <Welcome/>
                         </Route>
-                        <Route path="/sign-up">
-                            <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
+                        <Route path="/logout">
+                            <Logout removeSessionToken={removeSessionToken}/>
                         </Route>
                         <Route path="/about-us">
                             <AboutUs />
                         </Route>
                         <Route path="/privacy-policy">
-                            <PrivacyPolicy />
+                            <PrivacyPolicy/>
                         </Route>
                         <Route path="/contact-us">
-                            <ContactUs />
+                            <ContactUs/>
                         </Route>
                         <Route path="/group-details">
                             <GroupDetails apiService={apiService}/>
                         </Route>
                         <Route path="/test-upload">
                             <FileUpload 
-                                postUpload={apiService.current.uploadPfp.bind(apiService.current)}
-                                getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
+                                postUpload={apiService.uploadPfp.bind(apiService)}
+                                getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
                         </Route>
-                        <Route path="/findfriend">
-                            <FindFriend />
+                        <Route path="/find-friend">
+                            <FindFriend apiService = {apiService}/>
                         </Route>
-                    </Switch>
+                        <Route path="/viewfriends">
+                            <ViewFriends someprop = {myArray}/>
+                        </Route>
+                    </>
+                    : <>
+                        <Route path="/login">
+                            <Login setSessionToken={setSessionToken} apiService={apiService}/>
+                        </Route>
+                        <Route path="/sign-up">
+                            <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
+                        </Route>
+                    </>
+                    }
                 </div>
-                </BrowserRouter>
-              
-                </div>
-                <BrowserRouter>
-  
-                <div>
-                <Footer />
-                </div>
-            </BrowserRouter>
+            </div>
         </div>
+        
+        <Footer/>
+    </Router>
     );
 }
 

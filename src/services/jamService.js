@@ -40,9 +40,50 @@ const SESSION_TOKEN_KEY = "session-token";
 //     }
 
 class JamAPIService {
-    constructor(sessionToken, removeSessionToken) {
+    constructor(sessionToken, removeSessionToken, history) {
         this.removeSessionToken = removeSessionToken;
         this.sessionToken = sessionToken;
+        this.history = history;
+    }
+
+    getUser(userId){
+        return fetch(API_CALL_URL("user", userId),{
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
+    rejectMatch(userId){
+        return this.apiRequest(API_CALL_URL("match","reject"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"userId":userId})
+           
+        })
+    }
+
+    acceptMatch(userId){
+        return this.apiRequest(API_CALL_URL("match","accept"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"userId":userId})
+           
+        })
+    }
+
+    getRec(){
+        return this.apiRequest(API_CALL_URL("match"), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
     }
 
     login(data) {
@@ -128,7 +169,10 @@ class JamAPIService {
             if (res.ok) {
                 return res;
             } else {
-                if (res.status === 401) this.removeSessionToken();
+                if (res.status === 401) {
+                    this.removeSessionToken();
+                    this.history.push("/login");
+                }
                 return Promise.reject(res);
             }
         });

@@ -87,56 +87,80 @@ const users = [
       },
     
   ];
-const FindFriend = () => {
+const FindFriend = (props) => {
     
-    
+    const apiService = props.apiService
     const [buttonText, setButtonText] = useState("Yes"); //same as creating your state variable where "Next" is the default value for buttonText and setButtonText is the setter function for your state variable instead of setState
-    const [selected, setSelected] = useState(0);
-    
+    const [selected, setSelected] = useState({});
+    const [loaded, setLoaded] = useState(false);
 
-    function handleAssigneeOnClick(){
-        setSelected(prev => {
-            if (prev === users.length - 1) {
-              return 0;
-            } else {
-              return prev + 1;
-            }
-          });
+    async function rejectMatch(){
+        let response = await apiService.rejectMatch(selected.id);
+        if (!response.ok) return;
+        loadUser();
         
-    };
+    }
 
+    async function acceptMatch(){
+        let response = await apiService.acceptMatch(selected.id);
+        if (!response.ok) return;
+        loadUser();
+        
+    }
+
+    async function loadUser(){
+        let response = await apiService.getRec();
+        if (!response.ok) {
+          setLoaded(false);
+          return;
+        }
+        let json = await response.json();
+        let recuserId = json.userId;
+
+        let userResponse = await apiService.getUser(recuserId);
+        if (!userResponse.ok) {
+          setLoaded(false);
+          return;
+        }
+        let userJson = await userResponse.json();
+        setSelected(userJson);
+        setLoaded(true);
+    }
 
     
+    useEffect(() => loadUser(), []);
+    
 
-    return (
+    return ( loaded &&
         <div>
             
             
                 
 
                     
+                            
+                            
                     
-                    
-                            <div style = {nameStyle} className="text-center">{users[selected].profile.firstName} {users[selected].profile.lastName}</div>
+                            <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
                             
 
                     
 
                     
                            
-                            <div style = {jobStyle} className="text-center">{users[selected].instruments.join(" ")}</div>
+                            <div style = {jobStyle} className="text-center">{selected.profile.instruments.join(" ")}</div>
                             
 
                    
                            
-                            <div style = {bioStyle} className="text-center">{users[selected].bio}</div>
+                            <div style = {bioStyle} className="text-center">{selected.profile.bio}</div>
                             
 
                     
                          <table style = {StyledTable}>   
                             <tr>
-                            <td><button style = {button} onClick={handleAssigneeOnClick }>{buttonText}</button> </td>
-                            <td><button style = {button} onClick={handleAssigneeOnClick }>NO</button></td>
+                            <td><button style = {button} onClick={acceptMatch }>{buttonText}</button> </td>
+                            <td><button style = {button} onClick={ rejectMatch }>NO</button></td>
                             
                             </tr>
                             </table>
