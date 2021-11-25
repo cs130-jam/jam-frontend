@@ -25,5 +25,11 @@ export const SidebarData = [
     path: '/find-friend',
     icon: <FaIcons.FaCartPlus style={darkIcon}/>,
     cName: 'nav-text'
+  },
+  {
+    title: 'Logout',
+    path: '/logout',
+    icon: <FaIcons.FaSignOutAlt style={darkIcon}/>,
+    cName: 'nav-text'
   }
 ];

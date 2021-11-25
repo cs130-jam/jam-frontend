@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { useHistory } from "react-router-dom";
 import '../App.css';
 import InputField from '../util/inputField';
 import useInterval from '../util/useInterval';
@@ -54,6 +55,7 @@ const alertStyle = {
 const SignUp = (props) => {
     const setSessionToken = props.setSessionToken;
     const apiService = props.apiService;
+    const history = useHistory();
     const [isValidInterests, setIsValidInterests] = useState(true); 
     const [failMessage, setFailMessage] = useState("");
 
@@ -246,6 +248,7 @@ const SignUp = (props) => {
         if (response.ok) {
             let json = await response.json();
             setSessionToken(json.token);
+            history.push("/home");
         } else {
             let error = await response.json();
             if (error.status === 400) {

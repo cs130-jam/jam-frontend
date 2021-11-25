@@ -1,4 +1,5 @@
-import React, {useState, useRef} from 'react';
+import React, {useState} from 'react';
+import { useHistory } from "react-router-dom";
 import '../App.css';
 import {Link} from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert'
@@ -20,6 +21,7 @@ const alertStyle = {
 
 const Login = (props) => {
     const setSessionToken = props.setSessionToken;
+    const history = useHistory();
     const apiService = props.apiService;
     
     const [isInvalid, setIsInvalid] = useState(false);
@@ -31,6 +33,7 @@ const Login = (props) => {
         if (response.ok) {
             let json = await response.json();
             setSessionToken(json.token);
+            history.push("/home");
         } else {
             let error = await response.json();
             if (error.status === 401) {

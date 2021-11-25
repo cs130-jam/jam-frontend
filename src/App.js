@@ -15,6 +15,7 @@ import JamAPIService from './services/jamService';
 import FileUpload from './util/imageUpload';
 import ViewFriends from './components/viewFriends';
 import Welcome from './components/welcome';
+import Logout from './components/logout';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
@@ -32,41 +33,46 @@ function App() {
         <Header/>
         <div className="container-fluid g-0">
             <div style={contentStyle}>
-
                 <Navbar sessionToken={sessionToken}/>
-                
                 <div className="row" style={contentStyle}>
-                <Route path="/home">
+                    {sessionToken != null && sessionToken.length > 0 
+                    ? <>
+                        <Route path="/home">
                             <Welcome/>
                         </Route>
-                    <Route path="/login">
-                        <Login setSessionToken={setSessionToken} apiService={apiService}/>
-                    </Route>
-
-                    <Route path="/sign-up">
-                        <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
-                    </Route>
-                    <Route path="/about-us">
-                        <AboutUs />
-                    </Route>
-                    <Route path="/privacy-policy">
-                        <PrivacyPolicy/>
-                    </Route>
-                    <Route path="/contact-us">
-                        <ContactUs/>
-                    </Route>
-                    <Route path="/test-upload">
-                        <FileUpload 
-                            postUpload={apiService.current.uploadPfp.bind(apiService.current)}
-                            getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
-                    </Route>
-                    <Route path="/find-friend">
-                        <FindFriend apiService = {apiService}/>
-                    </Route>
-                    <Route path="/viewfriends">
-                        <ViewFriends someprop = {myArray}/>
-                    </Route>
-                    
+                        <Route path="/logout">
+                            <Logout removeSessionToken={removeSessionToken}/>
+                        </Route>
+                        <Route path="/about-us">
+                            <AboutUs />
+                        </Route>
+                        <Route path="/privacy-policy">
+                            <PrivacyPolicy/>
+                        </Route>
+                        <Route path="/contact-us">
+                            <ContactUs/>
+                        </Route>
+                        <Route path="/test-upload">
+                            <FileUpload 
+                                postUpload={apiService.current.uploadPfp.bind(apiService.current)}
+                                getAccepted={apiService.current.getSupportedPfpFormats.bind(apiService.current)}/>
+                        </Route>
+                        <Route path="/find-friend">
+                            <FindFriend apiService = {apiService}/>
+                        </Route>
+                        <Route path="/viewfriends">
+                            <ViewFriends someprop = {myArray}/>
+                        </Route>
+                    </>
+                    : <>
+                        <Route path="/login">
+                            <Login setSessionToken={setSessionToken} apiService={apiService}/>
+                        </Route>
+                        <Route path="/sign-up">
+                            <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
+                        </Route>
+                    </>
+                    }
                 </div>
             </div>
         </div>
