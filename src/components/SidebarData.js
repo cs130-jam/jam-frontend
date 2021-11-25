@@ -7,7 +7,7 @@ const darkIcon = {
 
 export const SidebarData = [
   {
-    title: 'Find Musicians',
+    title: 'Suggestions',
     path: '/find-friend',
     icon: <FaIcons.FaCartPlus style={darkIcon}/>,
     cName: 'nav-text'
