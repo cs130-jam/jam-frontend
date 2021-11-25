@@ -1,5 +1,6 @@
 import React from 'react';
 import * as FaIcons from 'react-icons/fa';
+import * as GrIcons from "react-icons/gr";
 
 const darkIcon = {
   color: "grey"
@@ -9,7 +10,7 @@ export const SidebarData = [
   {
     title: 'Update Profile',
     path: '/update-profile',
-    icon: <FaIcons.FaHandPaper style={darkIcon}/>,
+    icon: <FaIcons.FaUserEdit style={darkIcon}/>,
     cName: 'nav-text'
   },
   {
