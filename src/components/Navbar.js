@@ -25,7 +25,7 @@ function Navbar(props) {
             <div className={'nav-menu ' + (sidebar ? 'active' : '')}>
                 <ul className='nav-menu-items'>
                     {SidebarData.map((item, index) => 
-                        <li key={index} className={item.cName}>
+                        <li key={index} className='nav-text'>
                             <Link to={item.path}>
                                 {item.icon}
                                 <span>{item.title}</span>
