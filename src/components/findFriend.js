@@ -94,8 +94,6 @@ const FindFriend = (props) => {
     const [selected, setSelected] = useState({});
     const [loaded, setLoaded] = useState(false);
 
-   
-
     async function rejectMatch(){
         let response = await apiService.current.rejectMatch(selected.id);
         if (!response.ok) return;
@@ -112,7 +110,7 @@ const FindFriend = (props) => {
 
     async function loadUser(){
         let response = await apiService.current.getRec();
-        
+        if (!response.ok) return;
         let json = await response.json();
         let recuserId = json.userId ;
         let userResponse = await apiService.current.getUser(recuserId);
