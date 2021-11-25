@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
 import Login from './components/login';
 import Header from './components/header';
@@ -17,6 +17,7 @@ import FileUpload from './util/imageUpload';
 import ViewFriends from './components/viewFriends';
 import Welcome from './components/welcome';
 import Logout from './components/logout';
+import Chatrooms from './components/chatrooms';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
@@ -27,9 +28,20 @@ const contentStyle = {
 function App() {
     const history = useHistory();
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
+    const [currentUser, setCurrentUser] = useState({});
     const apiService = new JamAPIService(sessionToken, removeSessionToken, history);
-    var myArray = ['something','hello'];
-    
+
+    useEffect(() => getCurrentUserId(), [sessionToken]);
+    async function getCurrentUserId() {
+        if (sessionToken === null || sessionToken.length === 0) {
+            setCurrentUser({});
+        } else {
+            let response = await apiService.getCurrentUser();
+            if (!response.ok) return;
+            setCurrentUser(await response.json());
+        }
+    }
+
     return (
     <Router>
         <Header/>
@@ -66,7 +78,10 @@ function App() {
                             <FindFriend apiService = {apiService}/>
                         </Route>
                         <Route path="/viewfriends">
-                            <ViewFriends someprop = {myArray}/>
+                            <ViewFriends someprop = {["1", "four"]}/>
+                        </Route>
+                        <Route path="/chatrooms">
+                            <Chatrooms apiService={apiService} currentUser={currentUser}/>
                         </Route>
                     </>
                     : <>

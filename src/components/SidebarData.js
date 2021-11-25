@@ -9,7 +9,13 @@ export const SidebarData = [
   {
     title: 'Suggestions',
     path: '/find-friend',
-    icon: <FaIcons.FaCartPlus style={darkIcon}/>,
+    icon: <FaIcons.FaHandPaper style={darkIcon}/>,
+    cName: 'nav-text'
+  },
+  {
+    title: 'Chatrooms',
+    path: '/chatrooms',
+    icon: <FaIcons.FaCommentAlt style={darkIcon}/>,
     cName: 'nav-text'
   },
   {

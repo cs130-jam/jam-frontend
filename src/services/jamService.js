@@ -54,6 +54,14 @@ class JamAPIService {
         });
     }
 
+    getCurrentUser() {
+        return this.apiRequest(API_CALL_URL("user"), {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
     rejectMatch(userId){
         return this.apiRequest(API_CALL_URL("match","reject"), {
             method: "POST",
@@ -140,6 +148,22 @@ class JamAPIService {
             method: "POST",
             body: pfpForm
         })
+    }
+
+    getChatroomIds() {
+        return this.apiRequest(API_CALL_URL("chatrooms"), {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
+    getChatroom(roomId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId), {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
     }
 
     test() {
