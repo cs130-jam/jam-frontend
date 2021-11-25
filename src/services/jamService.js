@@ -40,9 +40,10 @@ const SESSION_TOKEN_KEY = "session-token";
 //     }
 
 class JamAPIService {
-    constructor(sessionToken, removeSessionToken) {
+    constructor(sessionToken, removeSessionToken, history) {
         this.removeSessionToken = removeSessionToken;
         this.sessionToken = sessionToken;
+        this.history = history;
     }
 
     getUser(userId){
@@ -53,10 +54,17 @@ class JamAPIService {
         });
     }
 
+    getCurrentUser() {
+        return this.apiRequest(API_CALL_URL("user"), {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
     rejectMatch(userId){
         return this.apiRequest(API_CALL_URL("match","reject"), {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
@@ -68,7 +76,6 @@ class JamAPIService {
     acceptMatch(userId){
         return this.apiRequest(API_CALL_URL("match","accept"), {
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
@@ -83,7 +90,6 @@ class JamAPIService {
             headers: {
                 "Accept": "application/json"
             }
-           
         });
 
     }
@@ -144,6 +150,22 @@ class JamAPIService {
         })
     }
 
+    getChatroomIds() {
+        return this.apiRequest(API_CALL_URL("chatrooms"), {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
+    getChatroom(roomId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId), {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",
@@ -162,7 +184,10 @@ class JamAPIService {
             if (res.ok) {
                 return res;
             } else {
-                if (res.status === 401) this.removeSessionToken();
+                if (res.status === 401) {
+                    this.removeSessionToken();
+                    this.history.push("/login");
+                }
                 return Promise.reject(res);
             }
         });

@@ -47,7 +47,6 @@ const Chatrooms = (props) => {
 
     async function fetchChatroomIds() {
         if (currentUser.id === undefined) return;
-
         let response = await apiService.getChatroomIds();
         if (!response.ok) return;
         let ids = await response.json();

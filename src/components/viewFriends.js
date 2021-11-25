@@ -2,7 +2,7 @@ import React, {useState, useRef,useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import '../App.css';
 import classNames from 'classnames';
-import styles from './button.css';
+import styles from './mystyle.module.css'; 
 
 const button={
     cursor: 'pointer',
@@ -90,15 +90,31 @@ const button={
   ];
 
   function ViewFriends(props) {
-    
+   /* const apiService = props.apiService
+    const [selected, setSelected] = useState([]);
+    const [loadeds, setLoadeds] = useState(false);
+    async function loadUsers(){
+        let response = await apiService.getuserlist();
+        for(var i =0; i<response.length; i++){ 
+          let userResponse = await apiService.getUser(response[i]);
+          let userJson = await userResponse.json();
+          setSelected(selected.concat(userJson));
+        }
+        
+        
+        setLoadeds(true);
+    }
+
+*/
+
     const [user, setUsers] = useState(friends);
     const [animate, setAnimate] = useState(false);
 
     const handleClick = () => setAnimate(!animate);
 
     
-
-    return (
+   // useEffect(() => loadUsers(), []);
+    return (// loadeds &&
         <div className="container">
             <h3 className="p-3 text-center">My Friends</h3>
             <table className="table table-striped table-bordered" style = {StyledTable}>
@@ -114,11 +130,7 @@ const button={
                         <tr >
                             <td>{user.profile.firstName} {user.profile.lastName}</td>
                             <td>{user.instruments.join(" ")}</td>
-                            <td><button  onClick={handleClick}
-      className={classNames(
-        styles.animate,
-        animate && styles.grow
-      )} >Message</button></td>
+                            <td><button >Message</button></td>
                         </tr>
                     )}
                 </tbody>

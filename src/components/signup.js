@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { useHistory } from "react-router-dom";
 import '../App.css';
 import InputField from '../util/inputField';
 import useInterval from '../util/useInterval';
@@ -54,6 +55,7 @@ const alertStyle = {
 const SignUp = (props) => {
     const setSessionToken = props.setSessionToken;
     const apiService = props.apiService;
+    const history = useHistory();
     const [isValidInterests, setIsValidInterests] = useState(true); 
     const [failMessage, setFailMessage] = useState("");
 
@@ -81,7 +83,7 @@ const SignUp = (props) => {
     async function checkUsername() {
         if (username === lastUsername.current) return isValidUsername;
 
-        let response = await apiService.current.existingUser(username);
+        let response = await apiService.existingUser(username);
         setIsValidUsername(response.ok);
         lastUsername.current = username;
         return response.ok;
@@ -127,7 +129,7 @@ const SignUp = (props) => {
     }
 
     async function getInstruments() {
-        let response = await apiService.current.getInstruments();
+        let response = await apiService.getInstruments();
         let json = await response.json();
         setInstruments(json);
     }
@@ -160,7 +162,7 @@ const SignUp = (props) => {
         if (cached && cached.page === cached.totalPages) return;
 
         let page = cached ? cached.page + 1 : 1;
-        let response = await apiService.current.findArtists(query, page);
+        let response = await apiService.findArtists(query, page);
         let json = await response.json();
         if (!cached) {
             cachedSearches[query] = {
@@ -176,7 +178,7 @@ const SignUp = (props) => {
             cached.responses = [...cached.responses, json.responses];
         }
 
-        if (cached.responses.lenth < wantedCount) {
+        if (cached.responses.length < wantedCount) {
             getArtistsForQuery(query, wantedCount, cachedSearches);
         } else {
             setCachedSearches(cachedSearches);
@@ -229,7 +231,7 @@ const SignUp = (props) => {
             navigator.geolocation.getCurrentPosition(pos => resolve(pos), error => reject(error));
         });
         let location = await locationPromise;
-        let response = await apiService.current.signup({
+        let response = await apiService.signup({
             "username": username,
             "password": password,
             "firstName": firstName,
@@ -246,6 +248,7 @@ const SignUp = (props) => {
         if (response.ok) {
             let json = await response.json();
             setSessionToken(json.token);
+            history.push("/home");
         } else {
             let error = await response.json();
             if (error.status === 400) {
