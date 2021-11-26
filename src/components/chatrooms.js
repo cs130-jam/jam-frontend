@@ -83,7 +83,7 @@ const Chatrooms = (props) => {
 
     const websocket = useRef(null);
     const [chatsMap, setChatsMap, chatMapsRef] = useStateRef({});
-    const [selectedChatroom, setSelectedChatroom] = useState("");
+    const [selectedChatroom, setSelectedChatroom] = useState(props.match.params.roomId ? props.match.params.roomId : "");
     
     useInterval(fetchChatroomIds, FETCH_IDS_DELAY);
     useEffect(() => fetchChatroomIds(), [currentUser]);
@@ -111,7 +111,6 @@ const Chatrooms = (props) => {
         let response = await apiService.getChatroom(roomId);
         if (!response.ok) return;
         let json = await response.json();
-        console.log(json);
 
         let otherMemberResponses = await Promise.all(json.members
             .filter(id => id != currentUser.id)
@@ -186,7 +185,9 @@ const Chatrooms = (props) => {
             </h3>
             <ul style={roomsListStyle}>
                 {chatroomIds.slice(0, loadedCount).map(roomId => 
-                    <li key={roomId} className="chatroom-entry" onClick={() => setSelectedChatroom(roomId)}>
+                    <li key={roomId} 
+                        className={"chatroom-entry " + (selectedChatroom === roomId ? "active" : "")}
+                        onClick={() => setSelectedChatroom(roomId)}>
                         <span>{!isLoaded(roomId)
                             ? "Loading..."
                             : (chatroomMap[roomId].directMessage
