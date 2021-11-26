@@ -105,7 +105,7 @@ const button={
         setUsers(friends);
         else return;
       }
-
+//api to take to the chatroom
       async function handleClick(){
         console.log(user.id);
         let response = await apiService.getCurrentUserChatroom(user.id);   
