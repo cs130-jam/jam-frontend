@@ -7,6 +7,7 @@ import DropdownField from '../util/dropdownField';
 import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
 
+
   const instrumentsListStyle = {
     margin: "0px",
     padding: "0px",

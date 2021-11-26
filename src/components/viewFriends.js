@@ -54,7 +54,7 @@ const button={
   
 
 
-  const friends = [
+  const fr = [
     {
         profile:{
       firstName: 'Charlie',
@@ -89,13 +89,38 @@ const button={
     
   ];
 
-  function ViewFriends(props) {
-   /* const apiService = props.apiService
-    const [selected, setSelected] = useState([]);
+  const ViewFriends = (props) => {
+   const apiService = props.apiService
+   const [user, setUsers] = useState([]);
     const [loadeds, setLoadeds] = useState(false);
+    
     async function loadUsers(){
-        let response = await apiService.getuserlist();
+        //let response = await apiService.getfriends();
+        //console.log(response);
+      
+      
+        let response = await apiService.getfriends();
+        if (!response.ok) return;
+        let friendIds = await response.json();
+
+        let friendsResponses = await Promise.all(friendIds.map(id => apiService.getUser(id)));
+        let friends = await Promise.all(friendsResponses.map(resp => resp.json()));
+        console.log(friends);
+        if(friends.length > 0)
+        setUsers(friends);
+
+        else return;
+      
+      }
+        /*if (!response.ok) {
+          setLoadeds(false);
+          return;
+        }
+        let jsonres = await response.json();
+
+        console.log(jsonres);}
         for(var i =0; i<response.length; i++){ 
+
           let userResponse = await apiService.getUser(response[i]);
           let userJson = await userResponse.json();
           setSelected(selected.concat(userJson));
@@ -105,38 +130,38 @@ const button={
         setLoadeds(true);
     }
 
+
 */
+   //
+    //const [animate, setAnimate] = useState(false);
 
-    const [user, setUsers] = useState(friends);
-    const [animate, setAnimate] = useState(false);
-
-    const handleClick = () => setAnimate(!animate);
+    //const handleClick = () => setAnimate(!animate);
 
     
-   // useEffect(() => loadUsers(), []);
-    return (// loadeds &&
-        <div className="container">
-            <h3 className="p-3 text-center">My Friends</h3>
-            <table className="table table-striped table-bordered" style = {StyledTable}>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>instruments</th>
-                        <th>Action</th>
+   useEffect(() => loadUsers(), []);
+   return (  
+    <div className="container">
+        <h3 className="p-3 text-center">My Friends</h3>
+        <table className="table table-striped table-bordered" style = {StyledTable}>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                   
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+               {user && user.map(user =>
+                    <tr >
+                        <td>{user.profile.firstName} {user.profile.lastName}</td>
+                        
+                        <td><button >Message</button></td>
                     </tr>
-                </thead>
-                <tbody>
-                    {user && user.map(user =>
-                        <tr >
-                            <td>{user.profile.firstName} {user.profile.lastName}</td>
-                            <td>{user.instruments.join(" ")}</td>
-                            <td><button >Message</button></td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
-    );
-                           }
+                )}
+            </tbody>
+        </table>
+    </div>
+);
+               }
                            
                            export default ViewFriends;

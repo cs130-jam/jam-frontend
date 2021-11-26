@@ -1,0 +1,73 @@
+#chat ul {
+    list-style-type: none;
+    width: 100%;
+    height: calc(100% - 80px);
+    overflow-y: auto;
+    padding-inline-start: 0px;
+    padding: 0px 4px;
+    position: absolute;
+    bottom: 50px;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#chat ul::-webkit-scrollbar {
+    display: none;
+}
+
+#chat ul li {
+    padding: 1px;
+}
+
+#chat ul li::after { 
+    content: " ";
+    display: block; 
+    height: 0; 
+    clear: both;
+ }
+
+ #chat ul li .message-item {
+    border-radius: 4px;
+    max-width: calc(100% - 200px);
+    padding: 8px;
+}
+
+#chat ul li .message-body {
+    width: 100%;
+    word-wrap: break-word;
+}
+
+#chat ul li .received {
+    float: left;
+    background-color: rgb(240, 240, 240);
+}
+
+#chat ul li .sent {
+    float: right;
+    background-color: rgb(199, 202, 235);
+}
+
+#chat ul div.username {
+    color: rgb(130, 130, 130);
+}
+
+#message {
+    width: calc(100% - 104px);
+    height: 37px;
+    margin-left: 10px;
+    margin-right: 4px
+}
+
+#interface {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#interface button {
+    width: 80px;
+    margin: 10px;
+    margin-left: 0px;
+}
