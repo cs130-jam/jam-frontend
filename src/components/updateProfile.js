@@ -52,36 +52,42 @@ const UpdateProfile = (props) => {
 
     useEffect(() => loadUser(), []);
 
+    const pages = [
+        (
+            <div className="container-fluid g-0">
+            <p className="jam-title-text">Personal Information</p>
+            <ErrorInputField 
+                value={firstName}
+                onInput={setFirstName}
+                label="First Name: " 
+                type="text" 
+                isError={firstName.length === 0}
+                message="First name is required"/>
+            <InputField value={lastName} onInput={setLastName} label="Last Name:" type="text" />
+            <div className="row g-0">
+                <div className="col-4">
+                    {/* <button className="jam-submit-button disabled" disabled>Back</button> */}
+                </div>
+                <div className="col-4"></div>
+                <div className="col-4">
+                    <button className="jam-submit-button" onClick={next}>Next</button>
+                </div>  
+            </div>
+        </div>
+        )
+    ];
+
     return (
 
-      <div >
+    
           
           <div className="d-flex justify-content-center align-items-center">
           <div className="jam-form">
-          <div className="container-fluid g-0">
-                <p className="jam-title-text">Personal Information</p>
-                <ErrorInputField 
-                    value={firstName}
-                    onInput={setFirstName}
-                    label="First Name: " 
-                    type="text" 
-                    isError={firstName.length === 0}
-                    message="First name is required"/>
-                <InputField value={lastName} onInput={setLastName} label="Last Name:" type="text" />
-                <div className="row g-0">
-                    <div className="col-4">
-                        {/* <button className="jam-submit-button disabled" disabled>Back</button> */}
-                    </div>
-                    <div className="col-4"></div>
-                    <div className="col-4">
-                        <button className="jam-submit-button" onClick={next}>Next</button>
-                    </div>  
-                </div>
-            </div>
+          {pages[0]}
           
             </div>
             </div>
-      </div>
+  
     );
 };
 
