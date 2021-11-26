@@ -26,6 +26,13 @@ const contentStyle = {
     position: "relative"
 };
 
+const notFoundStyle = {
+    width: "100%",
+    textAlign: "center",
+    fontSize: "50pt",
+    marginTop: "20px"
+};
+
 function App() {
     const history = useHistory();
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
@@ -52,51 +59,54 @@ function App() {
                 <div className="row" style={contentStyle}>
                     {sessionToken != null && sessionToken.length > 0 
                     ? <>
-                        <Route path="/home">
+                        <Route exact path="/home">
                             <Welcome/>
                         </Route>
-                        <Route path="/logout">
+                        <Route exact path="/logout">
                             <Logout removeSessionToken={removeSessionToken}/>
                         </Route>
-                        <Route path="/about-us">
+                        <Route exact path="/about-us">
                             <AboutUs />
                         </Route>
-                        <Route path="/privacy-policy">
+                        <Route exact path="/privacy-policy">
                             <PrivacyPolicy/>
                         </Route>
-                        <Route path="/contact-us">
+                        <Route exact path="/contact-us">
                             <ContactUs/>
                         </Route>
-                        <Route path="/test-upload">
+                        <Route exact path="/test-upload">
                             <FileUpload 
                                 postUpload={apiService.uploadPfp.bind(apiService)}
                                 getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
                         </Route>
-                        <Route path="/update-profile">
+                        <Route exact path="/update-profile">
                             <UpdateProfile apiService = {apiService}/>
                         </Route>
-                        <Route path="/find-friend">
+                        <Route exact path="/find-friend">
                             <FindFriend apiService = {apiService}/>
                         </Route>
-                        <Route path="/viewfriends">
+                        <Route exact path="/viewfriends">
                             <ViewFriends someprop = {["1", "four"]}/>
                         </Route>
-                        <Route path="/chatrooms">
+                        <Route exact path="/chatrooms">
                             <Chatrooms apiService={apiService} currentUser={currentUser} sessionToken={sessionToken}/>
                         </Route>
-                        <Route path="/create-chatroom">
+                        <Route exact path="/create-chatroom">
                             <CreateChatroom apiService={apiService}/>
                         </Route>
                     </>
                     : <>
-                        <Route path="/login">
+                        <Route exact path="/login">
                             <Login setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
-                        <Route path="/sign-up">
+                        <Route exact path="/sign-up">
                             <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
                     </>
                     }
+                    <Route>
+                        <h1 style={notFoundStyle}>Page not found</h1>
+                    </Route>
                 </div>
             </div>
         </div>
