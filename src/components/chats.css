@@ -1,7 +1,7 @@
 #chat ul {
     list-style-type: none;
     width: 100%;
-    height: calc(100% - 70px);
+    height: calc(100% - 80px);
     overflow-y: auto;
     padding-inline-start: 0px;
     padding: 0px 4px;
@@ -27,7 +27,7 @@
     clear: both;
  }
 
- #chat ul li .messageitem {
+ #chat ul li .message-item {
     border-radius: 4px;
     max-width: calc(100% - 200px);
     padding: 8px;

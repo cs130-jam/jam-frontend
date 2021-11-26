@@ -17,6 +17,7 @@ import ViewFriends from './components/viewFriends';
 import Welcome from './components/welcome';
 import Logout from './components/logout';
 import Chatrooms from './components/chatrooms';
+import CreateChatroom from './components/createChatroom';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
@@ -78,6 +79,9 @@ function App() {
                         </Route>
                         <Route path="/chatrooms">
                             <Chatrooms apiService={apiService} currentUser={currentUser} sessionToken={sessionToken}/>
+                        </Route>
+                        <Route path="/create-chatroom">
+                            <CreateChatroom apiService={apiService}/>
                         </Route>
                     </>
                     : <>

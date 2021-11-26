@@ -223,7 +223,7 @@ const Chatrooms = (props) => {
                     }
                     <h4>Members:</h4>
                     {[currentUser, ...chatroomMap[selectedChatroom].otherMembers].map(user => 
-                        <Link to="/user-profile" className="chatroom-member-entry">
+                        <Link key={user.id} to="/user-profile" className="chatroom-member-entry">
                             {user.profile.firstName + " " + user.profile.lastName}
                         </Link>
                     )}

@@ -131,6 +131,17 @@ class JamAPIService {
         });
     }
 
+    createChatroom(roomData) {
+        return this.apiRequest(API_CALL_URL("chatroom"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(roomData)
+        });
+    }
+
     getChatsByCount(roomId, count) {
         return this.apiRequest(
             API_QUERY_PARAMS(
@@ -160,6 +171,12 @@ class JamAPIService {
                 body: message
             }
         );
+    }
+
+    getFriendIds() {
+        return this.apiRequest(API_CALL_URL("friends"), {
+            headers: {"Accept": "application/json"}
+        });
     }
 
     test() {

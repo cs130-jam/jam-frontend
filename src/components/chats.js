@@ -1,6 +1,5 @@
 import './chats.css';
 import { useEffect, useRef, useState } from "react";
-import useInterval from "../util/useInterval";
 
 const containerStyle = {
     position: "relative",
@@ -53,7 +52,7 @@ const Chats = (props) => {
                 {chatsMap[roomId] && chatsMap[roomId].map(chat => 
                     <li key={chat.id}>
                         <div 
-                            className={"messageitem " + (currentUser.id === chat.senderId ? "sent" : "received")}
+                            className={"message-item " + (currentUser.id === chat.senderId ? "sent" : "received")}
                             key={chat.id}
                         >
                             <div className="username">{getUsername(chat.senderId)}</div>
