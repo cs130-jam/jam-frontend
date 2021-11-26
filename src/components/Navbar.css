@@ -10,11 +10,11 @@
 .nav-menu {
   background-color: rgb(252, 252, 252);
   top: 0px;
-  left: -270px;
-  width: 270px;
+  left: -100%;
+  min-width: 240px;
   height: 100%;
   position: absolute;
-  transition: 350ms;
+  transition: 850ms;
   z-index: 10;
   padding: 8px;
   padding-top: 4rem;
@@ -23,7 +23,7 @@
 
 .nav-menu.active {
   left: 0;
-  transition: 350ms;
+  transition: 250ms;
 }
 
 .nav-text {

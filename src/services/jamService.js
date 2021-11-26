@@ -4,41 +4,6 @@ const API_CALL_URL = (...path) => API_BASE_URL + path.join("/");
 const API_QUERY_PARAMS = (url, params) => url + "?" + new URLSearchParams(params);
 const SESSION_TOKEN_KEY = "session-token";
 
-// import { apiUrl } from './util/request';
-// import useCookie from './util/useCookie';
-
-// const WEBSOCKET_URL = "ws://localhost:8080/api/ws/jam";
-
-// function App() {
-//     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
-//     let ws = useRef(null);
-
-//     function fetchWithToken(url, info) {
-//         const headersWithToken = "headers" in info ? info.headers : {};
-//         headersWithToken[SESSION_TOKEN_KEY] = sessionToken;
-//         info.headers = headersWithToken;
-
-//         return fetch(url, info).then(res => {
-//             if (res.ok) {
-//                 return res;
-//             } else {
-//                 if (res.status === 401) removeSessionToken();
-//                 return Promise.reject(res);
-//             }
-//         });
-//     }
-
-//     function makeWebsocket(sessionToken) {
-//         const ws = new WebSocket(WEBSOCKET_URL);
-//         ws.onopen = () => {
-//             ws.send(sessionToken);
-//         }
-//         ws.onmessage = message => console.log(message);
-//         ws.onerror = console.error;
-    
-//         return ws;
-//     }
-
 class JamAPIService {
     constructor(sessionToken, removeSessionToken, history) {
         this.removeSessionToken = removeSessionToken;
@@ -183,6 +148,54 @@ class JamAPIService {
             method: "DELETE"
         });
     }
+    
+    createChatroom(roomData) {
+        return this.apiRequest(API_CALL_URL("chatroom"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(roomData)
+        });
+    }
+
+    getChatsByCount(roomId, count) {
+        return this.apiRequest(
+            API_QUERY_PARAMS(
+                API_CALL_URL("chatroom", roomId, "recent"), 
+                {"count": count}
+            ),
+            {headers: {"Accept": "application/json"}}
+        );
+    }
+
+    getChatsByTime(roomId, time) {
+        return this.apiRequest(
+            API_QUERY_PARAMS(
+                API_CALL_URL("chatroom", roomId, "after"), 
+                {"time": time}
+            ),
+            {headers: {"Accept": "application/json"}}
+        );
+    }
+
+    sendChat(roomId, message) {
+        return this.apiRequest(
+            API_CALL_URL("chatroom", roomId),
+            {
+                method: "POST",
+                headers: {"Content-Type": "text/plain"},
+                body: message
+            }
+        );
+    }
+
+    getFriendIds() {
+        return this.apiRequest(API_CALL_URL("friends"), {
+            headers: {"Accept": "application/json"}
+        });
+    }
 
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
@@ -230,4 +243,5 @@ class JamAPIService {
         });
     }
 }
+
 export default JamAPIService;

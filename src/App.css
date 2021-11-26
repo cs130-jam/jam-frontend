@@ -98,13 +98,15 @@
     position: relative;
     margin-top: 5px;
 }
+.removable-list-entry span {
+    margin-left: 0px;
+}
 
-.removable-list-entry button {
+.removable-list-entry button, .removable-list-entry .remove-icon {
     border: 1px solid #efffff;
     border-radius: 300px;
-    background: #3085d6;
     font-size: 15px;
-    color: white;
+    color: black;
     position: absolute;
     right: 10px;
     width: 25px;
@@ -113,6 +115,7 @@
     text-align: center;
     vertical-align: middle;
 }
+<<<<<<< HEAD
 
 .group-chat-pic {
     border: 5px solid #111;
@@ -121,6 +124,60 @@
 
 .edit-btn {
     border: none;
+=======
+.removable-list-entry .remove-icon:hover {
+    cursor: pointer;
+}
+
+.chatroom-entry {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    min-height: 60px;
+    padding: 14px 12px;
+    font-size: 16pt;
+    word-wrap: break-word;
+}
+.chatroom-entry:first-child {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.chatroom-entry:hover {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.chatroom-entry span {
+    margin: 0px;
+}
+
+.chatroom-member-entry {
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 4px;
+    margin-right: 10px;
+    font-size: 14pt;
+    display: block;
+    color: black;
+    text-decoration: none;
+}
+.chatroom-member-entry:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    color: black;
+}
+
+/*
+.heroimage {
+    background-image: url("./test.JPG");
+    background-color: #cccccc;
+    height: 500px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+  }
+  
+  .herotext {
+>>>>>>> master
     text-align: center;
     text-decoration: none;
     display: inline-block;

@@ -18,11 +18,20 @@ import ViewFriends from './components/viewFriends';
 import Welcome from './components/welcome';
 import Logout from './components/logout';
 import Chatrooms from './components/chatrooms';
+import UpdateProfile from './components/updateProfile';
+import CreateChatroom from './components/createChatroom';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    minHeight: "calc(100vh - 106px - 118px)", // values determined from header and footer height
+    height: "calc(100vh - 107px - 118px)", // values determined from header and footer height
     position: "relative"
+};
+
+const notFoundStyle = {
+    width: "100%",
+    textAlign: "center",
+    fontSize: "50pt",
+    marginTop: "20px"
 };
 
 function App() {
@@ -51,48 +60,57 @@ function App() {
                 <div className="row" style={contentStyle}>
                     {sessionToken != null && sessionToken.length > 0 
                     ? <>
-                        <Route path="/home">
+                        <Route exact path="/home">
                             <Welcome/>
                         </Route>
-                        <Route path="/logout">
+                        <Route exact path="/logout">
                             <Logout removeSessionToken={removeSessionToken}/>
                         </Route>
-                        <Route path="/about-us">
+                        <Route exact path="/about-us">
                             <AboutUs />
                         </Route>
-                        <Route path="/privacy-policy">
+                        <Route exact path="/privacy-policy">
                             <PrivacyPolicy/>
                         </Route>
-                        <Route path="/contact-us">
+                        <Route exact path="/contact-us">
                             <ContactUs/>
                         </Route>
-                        <Route path="/group-details">
+                        <Route exact path="/group-details">
                             <GroupDetails apiService={apiService}/>
                         </Route>
-                        <Route path="/test-upload">
+                        <Route exact path="/test-upload">
                             <FileUpload 
                                 postUpload={apiService.uploadPfp.bind(apiService)}
                                 getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
                         </Route>
-                        <Route path="/find-friend">
+                        <Route exact path="/update-profile">
+                            <UpdateProfile apiService = {apiService}/>
+                        </Route>
+                        <Route exact path="/find-friend">
                             <FindFriend apiService = {apiService}/>
                         </Route>
-                        <Route path="/viewfriends">
+                        <Route exact path="/viewfriends">
                             <ViewFriends someprop = {["1", "four"]}/>
                         </Route>
-                        <Route path="/chatrooms">
-                            <Chatrooms apiService={apiService} currentUser={currentUser}/>
+                        <Route exact path="/chatrooms">
+                            <Chatrooms apiService={apiService} currentUser={currentUser} sessionToken={sessionToken}/>
+                        </Route>
+                        <Route exact path="/create-chatroom">
+                            <CreateChatroom apiService={apiService}/>
                         </Route>
                     </>
                     : <>
-                        <Route path="/login">
+                        <Route exact path="/login">
                             <Login setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
-                        <Route path="/sign-up">
+                        <Route exact path="/sign-up">
                             <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
                     </>
                     }
+                    <Route>
+                        <h1 style={notFoundStyle}>Page not found</h1>
+                    </Route>
                 </div>
             </div>
         </div>
