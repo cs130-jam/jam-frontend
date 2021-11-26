@@ -2,7 +2,6 @@ import React, {useState, useRef,useEffect} from 'react';
 import InputField from '../util/inputField';
 import ErrorInputField from '../util/errorInputField';
 import '../App.css';
-import './updateProfile.css';
 import DropdownField from '../util/dropdownField';
 import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
