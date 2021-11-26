@@ -113,6 +113,15 @@ class JamAPIService {
         });
     }
 
+    getTypes(){
+        return this.apiRequest(API_CALL_URL("music","types"), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
     getSupportedPfpFormats() {
         return fetch(API_CALL_URL("upload", "supported"));
     }

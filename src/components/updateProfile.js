@@ -5,7 +5,7 @@ import '../App.css';
 import DropdownField from '../util/dropdownField';
 import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
-
+import useStateRef from '../util/useStateRef';
 
   const instrumentsListStyle = {
     margin: "0px",
@@ -70,9 +70,11 @@ const UpdateProfile = (props) => {
     const [cachedSearches, setCachedSearches] = useState({});
     const [artistQueryResults, setArtistQueryResults] = useState([]);
     const [artistQuery, setArtistQuery] = useState("");
-    const [artists, setArtists] = useState([]);
+    const [artists, setArtists, artistsRef] = useStateRef([]);
+    let arts = [];
     const [isValidInterests, setIsValidInterests] = useState(true); 
     const [failMessage, setFailMessage] = useState("");
+
 
     function namesDone() {
         if (firstName.length === 0) {
@@ -140,8 +142,10 @@ const UpdateProfile = (props) => {
         if (cached && cached.page === cached.totalPages) return;
 
         let page = cached ? cached.page + 1 : 1;
+        console.log(query);
         let response = await apiService.findArtists(query, page);
         let json = await response.json();
+        console.log(json);
         if (!cached) {
             cachedSearches[query] = {
                 "page": page,
@@ -163,11 +167,17 @@ const UpdateProfile = (props) => {
         }
     }
 
-    function onArtistSelect(entry) {
-        if (artists.length >= 2) setIsValidInterests(true);
+    function onArtistSelect(entry, id) {
+        if (artistsRef.current.length >= 2) setIsValidInterests(true);
         console.log(entry);
-        setArtists([...artists, entry.content]);
+        console.log(id);
+        if(id===1)
+            setArtists([...artistsRef.current, entry]);
+        else
+            setArtists([...artistsRef.current, entry.content]);
+        //console.log(artists);
     }
+
 
     useEffect(() => {
         let cached = cachedSearches[artistQuery];
@@ -187,6 +197,8 @@ const UpdateProfile = (props) => {
                 "content": response
             };
         }));
+
+        console.log(artistQueryResults);
     }, [artistQuery, cachedSearches]);
 
     function moreEntries() {
@@ -197,7 +209,7 @@ const UpdateProfile = (props) => {
     }
 
     function removeArtist(removeEntry) {
-        setArtists(artists.filter(artist => artist.path !== removeEntry.path));
+        setArtists(artistsRef.current.filter(artist => artist.path !== removeEntry.path));
     }
 
     async function loadUser(){
@@ -213,13 +225,96 @@ const UpdateProfile = (props) => {
         setFirstName(json.profile.firstName);
         setLastName(json.profile.lastName);
         setKnownInstruments(json.profile.instruments);
+        
+        //setLoaded(true);
+        
+        for(let i=0; i<json.profile.musicInterests.length; i++)
+        {
+            console.log(json.profile.musicInterests[i].name);
+            let flag = true;
+            let page = 1;
+            while(flag)
+            {
+                
+                //flag=false;
+                let response1 = await apiService.findArtists(json.profile.musicInterests[i].name, page);
+                let json1 = await response1.json();
+                let var1 = json1.responses.filter(artist => artist.path === json.profile.musicInterests[i].path);
+                
+                page++;
+                if(var1.length!==0)
+                   { 
+                    console.log(var1[0]);
+                    //setArtistQuery(json.profile.musicInterests[i].name);
+                    onArtistSelect(var1[0], 1);
+                    //setArtists([...artists, var1[0]]);
+                    arts.push( var1[0]);
+                    //console.log(arts);
+                       flag=false;
+                   }
+            }
+        }
         setLoaded(true);
+        /*console.log(arts);
+        //setArtists([...artists, arts[0]]);
+        if(arts.length>0)
+        setLoaded(true);
+        console.log(artists);
+        onArtistSelect(arts[0],1);
+        onArtistSelect(arts[1],1);*/
+        /*let i = 0;
+        let id = setTimeout(function() {
+            setArtists([...artists, arts[i]]);
+            i++;
+        }, 10000);*/
+        /*setTimeout(function() {
+            setArtists([...artists, arts[1]]);
+        }, 10000);*/
+        
+        //setArtists([...artists, arts[2]]);
+        /*json.profile.musicInterests.forEach(element => {
+            console.log(element.path);
+
+            let flag = true;
+
+            while(flag)
+            {
+                console.log(element.name);
+                //setArtistQuery(element.name);
+                //console.log(artistQuery);
+                //let cached = cachedSearches[element.name];
+
+               // getArtistsForQuery(element.name, cached ? cached.wantedCount : 10, {...cachedSearches});
+               // console.log(cachedSearches);
+                flag=false;
+            }
+        
+        });*/
+        /*(artist => //artist.path === 'artists/3840';);
+        {
+            let flag = true;
+            while(flag)
+            {
+                setArtistQuery(artist.name);
+                let var2 = artistQuery.filter(q)
+            }
+        });
+        console.log(var1);*/
     }
 
     useEffect(() => loadUser(), []);
 
     async function updateProfile() {
-        
+        console.log("gggggg");
+        if (artists.length < 3) {
+            setIsValidInterests(false);
+            return;
+        }
+        console.log(artists);
+        let locationPromise = new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(pos => resolve(pos), error => reject(error));
+        });
+        let location = await locationPromise;
     }
 
     const pages = [
@@ -283,7 +378,7 @@ const UpdateProfile = (props) => {
     return (
 
     
-          
+        loaded &&
           <div className="d-flex justify-content-center align-items-center">
           <div className="jam-form" style={formStyle}>
           <div className="container-fluid g-0">
