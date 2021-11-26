@@ -86,7 +86,7 @@ function App() {
                             <FindFriend apiService = {apiService}/>
                         </Route>
                         <Route exact path="/viewfriends">
-                            <ViewFriends someprop = {["1", "four"]}/>
+                            <ViewFriends apiService = {apiService}/>
                         </Route>
                         <Route exact path="/chatrooms">
                             <Chatrooms apiService={apiService} currentUser={currentUser} sessionToken={sessionToken}/>
@@ -104,9 +104,7 @@ function App() {
                         </Route>
                     </>
                     }
-                    <Route>
-                        <h1 style={notFoundStyle}>Page not found</h1>
-                    </Route>
+                    
                 </div>
             </div>
         </div>
