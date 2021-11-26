@@ -2,7 +2,6 @@ import React, {useState, useRef,useEffect} from 'react';
 import InputField from '../util/inputField';
 import ErrorInputField from '../util/errorInputField';
 import '../App.css';
-import './updateProfile.css';
 
 const textalign =  {
     textAlign: "center",
