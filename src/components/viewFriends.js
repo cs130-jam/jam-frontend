@@ -27,7 +27,8 @@ const button={
 
   const StyledTable = {
     
-    margin: "auto"
+    margin: "auto",
+    textAlign: "center"
   
   }
 
@@ -132,9 +133,9 @@ const button={
             <tbody>
                {users && users.map(user =>
                     <tr key = {user.id}>
-                        <td>{user.profile.firstName} {user.profile.lastName}</td>
+                        <td style = {textalign}>{user.profile.firstName} {user.profile.lastName}</td>
                         
-                        <td><button onClick = {() => handleClick(user.id)}>Message</button></td>
+                        <td style ={textalign}><button onClick = {() => handleClick(user.id)}>Message</button></td>
                     </tr>
                 )}
             </tbody>
