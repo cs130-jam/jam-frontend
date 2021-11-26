@@ -18,10 +18,11 @@ import Welcome from './components/welcome';
 import Logout from './components/logout';
 import Chatrooms from './components/chatrooms';
 import UpdateProfile from './components/updateProfile';
+import CreateChatroom from './components/createChatroom';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    minHeight: "calc(100vh - 106px - 118px)", // values determined from header and footer height
+    height: "calc(100vh - 107px - 118px)", // values determined from header and footer height
     position: "relative"
 };
 
@@ -81,7 +82,10 @@ function App() {
                             <ViewFriends someprop = {["1", "four"]}/>
                         </Route>
                         <Route path="/chatrooms">
-                            <Chatrooms apiService={apiService} currentUser={currentUser}/>
+                            <Chatrooms apiService={apiService} currentUser={currentUser} sessionToken={sessionToken}/>
+                        </Route>
+                        <Route path="/create-chatroom">
+                            <CreateChatroom apiService={apiService}/>
                         </Route>
                     </>
                     : <>
