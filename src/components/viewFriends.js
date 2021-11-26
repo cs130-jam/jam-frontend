@@ -95,7 +95,7 @@ const button={
     const [loadeds, setLoadeds] = useState(false);
     const history = useHistory();
     async function loadUsers(){
-        let response = await apiService.getfriends();
+        let response = await apiService.getFriendIds();
         if (!response.ok) return;
         let friendIds = await response.json();
         let friendsResponses = await Promise.all(friendIds.map(id => apiService.getUser(id)));

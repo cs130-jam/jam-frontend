@@ -1,6 +1,6 @@
 import './App.css';
-import React, { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, useHistory, Switch } from 'react-router-dom';
 import Login from './components/login';
 import Header from './components/header';
 import Footer from './components/footer';
@@ -58,7 +58,7 @@ function App() {
                 <Navbar sessionToken={sessionToken}/>
                 <div className="row" style={contentStyle}>
                     {sessionToken != null && sessionToken.length > 0 
-                    ? <>
+                    ? <Switch>
                         <Route exact path="/home">
                             <Welcome/>
                         </Route>
@@ -94,17 +94,22 @@ function App() {
                         <Route exact path="/create-chatroom">
                             <CreateChatroom apiService={apiService}/>
                         </Route>
-                    </>
-                    : <>
+                        <Route>
+                            <h1 style={notFoundStyle}>Page not found</h1>
+                        </Route>
+                    </Switch>
+                    : <Switch>
                         <Route exact path="/login">
                             <Login setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
                         <Route exact path="/sign-up">
                             <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
-                    </>
+                        <Route>
+                            <h1 style={notFoundStyle}>Page not found</h1>
+                        </Route>
+                    </Switch>
                     }
-                    
                 </div>
             </div>
         </div>

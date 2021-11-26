@@ -67,15 +67,6 @@ class JamAPIService {
 
     }
 
-    getfriends(){
-        return this.apiRequest(API_CALL_URL("friends"), {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        });
-    }
-
     login(data) {
         return fetch(API_CALL_URL("internal", "login"), {
             method: "POST",
