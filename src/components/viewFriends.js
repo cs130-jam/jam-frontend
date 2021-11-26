@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import '../App.css';
 import classNames from 'classnames';
 import styles from './mystyle.module.css'; 
-
+import { useHistory } from "react-router-dom";
 const button={
     cursor: 'pointer',
     border: '1px solid #1a202c',
@@ -54,7 +54,7 @@ const button={
   
 
 
-  const friends = [
+  const fr = [
     {
         profile:{
       firstName: 'Charlie',
@@ -89,54 +89,60 @@ const button={
     
   ];
 
-  function ViewFriends(props) {
-   /* const apiService = props.apiService
-    const [selected, setSelected] = useState([]);
+  const ViewFriends = (props) => {
+   const apiService = props.apiService
+   const [user, setUsers] = useState([]);
     const [loadeds, setLoadeds] = useState(false);
+    const history = useHistory();
     async function loadUsers(){
-        let response = await apiService.getuserlist();
-        for(var i =0; i<response.length; i++){ 
-          let userResponse = await apiService.getUser(response[i]);
-          let userJson = await userResponse.json();
-          setSelected(selected.concat(userJson));
-        }
-        
-        
-        setLoadeds(true);
-    }
-
-*/
-
-    const [user, setUsers] = useState(friends);
-    const [animate, setAnimate] = useState(false);
-
-    const handleClick = () => setAnimate(!animate);
+        let response = await apiService.getFriendIds();
+        if (!response.ok) return;
+        let friendIds = await response.json();
+        let friendsResponses = await Promise.all(friendIds.map(id => apiService.getUser(id)));
+        let friends = await Promise.all(friendsResponses.map(resp => resp.json()));
+        console.log(friends);
+        if(friends.length > 0)
+        setUsers(friends);
+        else return;
+      }
+//api to take to the chatroom
+      async function handleClick(){
+        console.log(user.id);
+        let response = await apiService.getCurrentUserChatroom(user.id);   
+        if (!response.ok) return;
+        let json = await response.json();
+        //console.log(json);
+        let chatroomId = json.roomId;
+        let path = '/chatrooms/${chatroomId}'      
+        history.push(path);
+      }
 
     
-   // useEffect(() => loadUsers(), []);
-    return (// loadeds &&
-        <div className="container">
-            <h3 className="p-3 text-center">My Friends</h3>
-            <table className="table table-striped table-bordered" style = {StyledTable}>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>instruments</th>
-                        <th>Action</th>
+    
+   useEffect(() => loadUsers(), []);
+   return (  
+    <div className="container">
+        <h3 className="p-3 text-center">My Friends</h3>
+        <table className="table table-striped table-bordered" style = {StyledTable}>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                   
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+               {user && user.map(user =>
+                    <tr key = {user.id}>
+                        <td>{user.profile.firstName} {user.profile.lastName}</td>
+                        
+                        <td><button onClick = {handleClick}>Message</button></td>
                     </tr>
-                </thead>
-                <tbody>
-                    {user && user.map(user =>
-                        <tr >
-                            <td>{user.profile.firstName} {user.profile.lastName}</td>
-                            <td>{user.instruments.join(" ")}</td>
-                            <td><button >Message</button></td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
-    );
-                           }
+                )}
+            </tbody>
+        </table>
+    </div>
+);
+               }
                            
                            export default ViewFriends;

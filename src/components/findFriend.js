@@ -110,6 +110,7 @@ const FindFriend = (props) => {
 
     async function loadUser(){
         let response = await apiService.getRec();
+        console.log(response);
         if (!response.ok) {
           setLoaded(false);
           return;
