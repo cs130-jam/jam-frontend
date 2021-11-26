@@ -33,7 +33,7 @@ const button={
   const nameStyle = {
     color: "black",
     fontSize:"100px",
-    margin: '0px',
+    //margin: '0px',
     fontFamily: "lato"
   };
 
@@ -46,8 +46,15 @@ const button={
 
   const jobStyle = {
     color: "black",
-    fontSize:"30px",
+    fontSize:"25px",
     
+    fontFamily: "lato"
+  };
+
+  const JS = {
+    color: "black",
+    fontSize:"30px",
+    fontWeight:"Bold",
     fontFamily: "lato"
   };
 
@@ -134,31 +141,12 @@ const FindFriend = (props) => {
 
     return ( loaded &&
         <div>
-            
-            
-                
-
-                    
-                            
-                            
-                    
-                            <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
-                            
-
-                    
-
-                    
-                           
-                            <div style = {jobStyle} className="text-center">{selected.profile.instruments.join(" ")}</div>
-                            
-
-                   
-                           
-                            <div style = {bioStyle} className="text-center">{selected.profile.bio}</div>
-                            
-
-                    
-                         <table style = {StyledTable}>   
+              <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
+              <div style = {bioStyle} className="text-center">This is my bio</div>  
+                            <div style = {bioStyle} className="text-center">{selected.bio}</div> 
+                            <table style = {StyledTable}><tr><td style = {JS}>Instruments known:</td><td style = {jobStyle} className="text-center">{selected.profile.instruments.join(", ")}</td></tr></table>      
+                                                    
+                            <table style = {StyledTable}>   
                             <tr>
                             <td><button style = {button} onClick={acceptMatch }>{buttonText}</button> </td>
                             <td><button style = {button} onClick={ rejectMatch }>NO</button></td>
