@@ -264,7 +264,7 @@ const UpdateProfile = (props) => {
             navigator.geolocation.getCurrentPosition(pos => resolve(pos), error => reject(error));
         });
         let location = await locationPromise;
-        let response = await apiService.signup({
+        let response = await apiService.updateProfile({
             "firstName": firstName,
             "lastName": lastName,
             "location": {

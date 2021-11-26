@@ -93,8 +93,7 @@ class JamAPIService {
         return this.apiRequest(API_CALL_URL("user", "profile"), {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(data)
         });
