@@ -9,13 +9,14 @@ const GroupDetails = (props) =>
     //api service needed to view gc details
     const apiService = props.apiService;
     const roomID = props.roomID;
+    const currentUser = props.currentUser;
 
     const [groupName, setGroupName] = useState("");
-    const [groupDetails, setGroupDetails] = useState({});
+    const [groupDetails, setGroupDetails] = useState("");
     const [loaded, setLoaded] = useState(false);
     const lastGroupDetails = useRef("");
     const lastGroupName = useRef("");
-    
+
     async function fetchGroupDetails()
     {
         let response = await apiService.getChatRoomDetails(roomID);
@@ -36,17 +37,17 @@ const GroupDetails = (props) =>
         setLoaded(true);
     }
 
-    async function updateGroupDetails()
+    async function updateGroupName()
     {
-        let response = await apiService.setGroupDetails(groupDetails);
-        lastGroupDetails.current = groupDetails;
+        let response = await apiService.setChatRoomDetails(roomID, groupName);
+        lastGroupName.current = groupName;
         return;
     }
 
-    async function updateGroupName()
+    async function updateGroupDetails()
     {
-        let response = await apiService.setGroupName(groupName);
-        lastGroupName.current = groupName;
+        let response = await apiService.setChatRoomDetails(roomID, groupDetails);
+        lastGroupDetails.current = groupDetails;
         return;
     }
 
@@ -57,11 +58,19 @@ const GroupDetails = (props) =>
 
     async function inviteMember()
     {
+        let response = await apiService.inviteMember(roomID, userID);
         return;
     }
 
     async function leaveGroup()
     {
+        let response = apiService.leaveGroup(roomID);
+        return;
+    }
+
+    async function removeMember()
+    {
+        let response = apiService.removeMember(roomID, userID);
         return;
     }
 
@@ -109,7 +118,7 @@ const GroupDetails = (props) =>
                     <li className="member-entry" key={members}>
                         <span>{members}</span>
                         <button class="edit-btn edit-btn1" onClick={viewProfile}>View Profile</button>
-                        <button class="edit-btn edit-btn1">Remove Member</button>
+                        {(roomID.info.admin === currentUser.id) && <button class="edit-btn edit-btn1" onClick={removeMember}>Remove Member</button>}
                     </li>
                 ))}
             </ul>

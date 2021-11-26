@@ -166,6 +166,24 @@ class JamAPIService {
         });
     }
 
+    leaveGroup(roomID) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomID), {
+            method: "POST"
+        });
+    }
+
+    inviteMember(roomID, userId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomID, "user", userId), {
+            method: "PUT"
+        })
+    }
+
+    removeMember(roomID, userId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomID, "user", userId), {
+            method: "DELETE"
+        });
+    }
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",
@@ -182,6 +200,16 @@ class JamAPIService {
                 "Accept": "application/json"
             }
         });
+    }
+
+    setChatRoomDetails(roomID, info) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomID, "info"), {
+            method: "PUT",
+            headers: {
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(info)
+        })
     }
 
     apiRequest(url, info) {
