@@ -62,7 +62,7 @@ function App() {
                             <FindFriend apiService = {apiService}/>
                         </Route>
                         <Route path="/viewfriends">
-                            <ViewFriends someprop = {myArray}/>
+                            <ViewFriends apiService = {apiService}/>
                         </Route>
                     </>
                     : <>
