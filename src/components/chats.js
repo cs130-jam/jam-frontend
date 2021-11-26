@@ -49,7 +49,7 @@ const Chats = (props) => {
     <div style={containerStyle}>
         <div id="chat">
             <ul>
-                {chatsMap[roomId] && chatsMap[roomId].map(chat => 
+                {chatroomMap[roomId] && chatsMap[roomId] && chatsMap[roomId].map(chat => 
                     <li key={chat.id}>
                         <div 
                             className={"message-item " + (currentUser.id === chat.senderId ? "sent" : "received")}
