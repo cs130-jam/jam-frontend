@@ -89,6 +89,17 @@ class JamAPIService {
         });
     }
 
+    updateProfile(data) {
+        return fetch(API_CALL_URL("user", "profile"), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
     existingUser(username) {
         return fetch(API_QUERY_PARAMS(API_CALL_URL("internal", "user"), {
             "username": username

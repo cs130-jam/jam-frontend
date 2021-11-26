@@ -6,6 +6,7 @@ import DropdownField from '../util/dropdownField';
 import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
 import useStateRef from '../util/useStateRef';
+import { useHistory } from "react-router-dom";
 
   const instrumentsListStyle = {
     margin: "0px",
@@ -54,10 +55,8 @@ const MIN_ARTIST_SEARCH_LEN = 2;
 const UpdateProfile = (props) => {
 
     const apiService = props.apiService
-    //const [buttonText, setButtonText] = useState("Yes"); //same as creating your state variable where "Next" is the default value for buttonText and setButtonText is the setter function for your state variable instead of setState
-    //const [selected, setSelected] = useState({});
-    const [loaded, setLoaded] = useState(false);
     const [pageIndex, setPageIndex] = useState(0);
+    const history = useHistory();
     
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -216,7 +215,6 @@ const UpdateProfile = (props) => {
         let response = await apiService.getCurrentUser();
         
         if (!response.ok) {
-          setLoaded(false);
           return;
         }
         let json = await response.json();
@@ -235,8 +233,7 @@ const UpdateProfile = (props) => {
             let page = 1;
             while(flag)
             {
-                
-                //flag=false;
+
                 let response1 = await apiService.findArtists(json.profile.musicInterests[i].name, page);
                 let json1 = await response1.json();
                 let var1 = json1.responses.filter(artist => artist.path === json.profile.musicInterests[i].path);
@@ -245,61 +242,13 @@ const UpdateProfile = (props) => {
                 if(var1.length!==0)
                    { 
                     console.log(var1[0]);
-                    //setArtistQuery(json.profile.musicInterests[i].name);
                     onArtistSelect(var1[0], 1);
-                    //setArtists([...artists, var1[0]]);
                     arts.push( var1[0]);
-                    //console.log(arts);
-                       flag=false;
+                    flag=false;
                    }
             }
         }
-        setLoaded(true);
-        /*console.log(arts);
-        //setArtists([...artists, arts[0]]);
-        if(arts.length>0)
-        setLoaded(true);
-        console.log(artists);
-        onArtistSelect(arts[0],1);
-        onArtistSelect(arts[1],1);*/
-        /*let i = 0;
-        let id = setTimeout(function() {
-            setArtists([...artists, arts[i]]);
-            i++;
-        }, 10000);*/
-        /*setTimeout(function() {
-            setArtists([...artists, arts[1]]);
-        }, 10000);*/
         
-        //setArtists([...artists, arts[2]]);
-        /*json.profile.musicInterests.forEach(element => {
-            console.log(element.path);
-
-            let flag = true;
-
-            while(flag)
-            {
-                console.log(element.name);
-                //setArtistQuery(element.name);
-                //console.log(artistQuery);
-                //let cached = cachedSearches[element.name];
-
-               // getArtistsForQuery(element.name, cached ? cached.wantedCount : 10, {...cachedSearches});
-               // console.log(cachedSearches);
-                flag=false;
-            }
-        
-        });*/
-        /*(artist => //artist.path === 'artists/3840';);
-        {
-            let flag = true;
-            while(flag)
-            {
-                setArtistQuery(artist.name);
-                let var2 = artistQuery.filter(q)
-            }
-        });
-        console.log(var1);*/
     }
 
     useEffect(() => loadUser(), []);
@@ -315,6 +264,23 @@ const UpdateProfile = (props) => {
             navigator.geolocation.getCurrentPosition(pos => resolve(pos), error => reject(error));
         });
         let location = await locationPromise;
+        let response = await apiService.signup({
+            "firstName": firstName,
+            "lastName": lastName,
+            "location": {
+                "longitude": location.coords.longitude.toString(),
+                "latitude": location.coords.latitude.toString()
+            },
+            "musicInterests": artists.map(artist => {
+                return {"name": artist.name, "path": artist.path}
+            }),
+            "instruments": knownInstruments
+        });
+        if (response.ok){
+            history.push("/home");
+        } 
+        console.log(response);
+
     }
 
     const pages = [
@@ -372,50 +338,49 @@ const UpdateProfile = (props) => {
                 </div>  
             </div>
         </div>
-        )
+        ),
+        (          <div className="container-fluid g-0">
+        {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
+        {failMessage.length > 0 && <Alert style={alertStyle} variant="danger">{failMessage}</Alert>}
+        <p className="jam-title-text">Favourite Artists</p>
+        <DropdownField 
+            value={artistQuery}
+            onInput={setArtistQuery}
+            label="Add Favorite Artists:" 
+            type="text"
+            hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
+            onMore={moreEntries}
+            onSelect={onArtistSelect}
+            entries={artistQueryResults}/>
+        <ul style={instrumentsListStyle}>
+            {artists.map(artist => (
+                <li className="removable-list-entry" key={artist.path}>
+                    <div style={artistContainer}>
+                        <img style={artistImageStyle} src={artist.thumb}/>
+                        <div style={artistNameStyle}>{artist.name}</div>
+                        <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
+                    </div>
+                </li>
+            ))}
+        </ul>
+        <div className="row g-0">
+            <div className="col-4">
+                <button className="jam-submit-button" onClick={prevPage}>Back</button>
+            </div>
+            <div className="col-4"></div>
+            <div className="col-4">
+                <button className="jam-submit-button" onClick={updateProfile}>Apply Changes</button>
+            </div>  
+        </div>
+    </div> )
     ];
 
     return (
 
-    
-        loaded &&
           <div className="d-flex justify-content-center align-items-center">
           <div className="jam-form" style={formStyle}>
-          <div className="container-fluid g-0">
-                {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
-                {failMessage.length > 0 && <Alert style={alertStyle} variant="danger">{failMessage}</Alert>}
-                <p className="jam-title-text">Favourite Artists</p>
-                <DropdownField 
-                    value={artistQuery}
-                    onInput={setArtistQuery}
-                    label="Add Favorite Artists:" 
-                    type="text"
-                    hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
-                    onMore={moreEntries}
-                    onSelect={onArtistSelect}
-                    entries={artistQueryResults}/>
-                <ul style={instrumentsListStyle}>
-                    {artists.map(artist => (
-                        <li className="removable-list-entry" key={artist.path}>
-                            <div style={artistContainer}>
-                                <img style={artistImageStyle} src={artist.thumb}/>
-                                <div style={artistNameStyle}>{artist.name}</div>
-                                <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-                <div className="row g-0">
-                    <div className="col-4">
-                        <button className="jam-submit-button" onClick={prevPage}>Back</button>
-                    </div>
-                    <div className="col-4"></div>
-                    <div className="col-4">
-                        <button className="jam-submit-button" onClick={updateProfile}>Apply Changes</button>
-                    </div>  
-                </div>
-            </div> 
-         
+
+          {pages[pageIndex]}
             </div>
             </div>
   
