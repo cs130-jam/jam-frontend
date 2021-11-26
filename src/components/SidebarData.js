@@ -17,6 +17,11 @@ export const SidebarData = [
     icon: <FaIcons.FaHandPaper style={darkIcon}/>,
   },
   {
+    title: 'My Friends',
+    path: '/view-friends',
+    icon: <FaIcons.FaUserFriends style={darkIcon}/>,
+  },
+  {
     title: 'Chatrooms',
     path: '/chatrooms',
     icon: <FaIcons.FaCommentAlt style={darkIcon}/>

@@ -85,7 +85,7 @@ function App() {
                         <Route exact path="/find-friend">
                             <FindFriend apiService = {apiService}/>
                         </Route>
-                        <Route exact path="/viewfriends">
+                        <Route exact path="/view-friends">
                             <ViewFriends apiService = {apiService}/>
                         </Route>
                         <Route exact path="/chatrooms">
