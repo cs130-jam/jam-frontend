@@ -27,6 +27,14 @@ class JamAPIService {
         });
     }
 
+    getCurrentUserChatroom(userId){
+        return this.apiRequest(API_CALL_URL("user", userId,"chatroom"), {
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
     rejectMatch(userId){
         return this.apiRequest(API_CALL_URL("match","reject"), {
             method: "POST",
@@ -57,15 +65,6 @@ class JamAPIService {
             }
         });
 
-    }
-
-    getfriends(){
-        return this.apiRequest(API_CALL_URL("friends"), {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        });
     }
 
     login(data) {

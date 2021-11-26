@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import '../App.css';
 import classNames from 'classnames';
 import styles from './mystyle.module.css'; 
-
+import { useHistory } from "react-router-dom";
 const button={
     cursor: 'pointer',
     border: '1px solid #1a202c',
@@ -91,52 +91,31 @@ const button={
 
   const ViewFriends = (props) => {
    const apiService = props.apiService
-   const [user, setUsers] = useState([]);
+   const [users, setUsers] = useState([]);
     const [loadeds, setLoadeds] = useState(false);
-    
+    const history = useHistory();
     async function loadUsers(){
-        //let response = await apiService.getfriends();
-        //console.log(response);
-      
-      
-        let response = await apiService.getfriends();
+        let response = await apiService.getFriendIds();
         if (!response.ok) return;
         let friendIds = await response.json();
-
         let friendsResponses = await Promise.all(friendIds.map(id => apiService.getUser(id)));
         let friends = await Promise.all(friendsResponses.map(resp => resp.json()));
         console.log(friends);
         if(friends.length > 0)
         setUsers(friends);
-
         else return;
-      
       }
-        /*if (!response.ok) {
-          setLoadeds(false);
-          return;
-        }
-        let jsonres = await response.json();
+//api to take to the chatroom
+      async function handleClick(userId){
+        let response = await apiService.getCurrentUserChatroom(userId);   
+        if (!response.ok) return;
+        let json = await response.json();
+        //console.log(json);
+        let chatroomId = json.roomId;
+        history.push(`/chatrooms/${chatroomId}`);
+      }
 
-        console.log(jsonres);}
-        for(var i =0; i<response.length; i++){ 
-
-          let userResponse = await apiService.getUser(response[i]);
-          let userJson = await userResponse.json();
-          setSelected(selected.concat(userJson));
-        }
-        
-        
-        setLoadeds(true);
-    }
-
-
-*/
-   //
-    //const [animate, setAnimate] = useState(false);
-
-    //const handleClick = () => setAnimate(!animate);
-
+    
     
    useEffect(() => loadUsers(), []);
    return (  
@@ -151,17 +130,17 @@ const button={
                 </tr>
             </thead>
             <tbody>
-               {user && user.map(user =>
-                    <tr >
+               {users && users.map(user =>
+                    <tr key = {user.id}>
                         <td>{user.profile.firstName} {user.profile.lastName}</td>
                         
-                        <td><button >Message</button></td>
+                        <td><button onClick = {() => handleClick(user.id)}>Message</button></td>
                     </tr>
                 )}
             </tbody>
         </table>
     </div>
-);
-               }
+);               
+}
                            
-                           export default ViewFriends;
+export default ViewFriends;
