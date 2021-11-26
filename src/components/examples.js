@@ -105,12 +105,7 @@ export const Random1 = () => (
 
     <div style={codeDivStyle}>
       <pre style={codeStyle}>
-        &lt;Random<br />
-        &nbsp;&nbsp;text="Jumping Beans!"<br />
-        &nbsp;&nbsp;effect="jump"<br />
-        &nbsp;&nbsp;effectChange=&#123;2.0}<br />
-        &nbsp;&nbsp;effectDuration=&#123;0.3}<br />
-      />
+       
       </pre>
     </div>
   </div>
@@ -149,14 +144,7 @@ export class Random2 extends React.Component {
 
         <div style={codeDivStyle}>
           <pre style={codeStyle}>
-            &lt;Random<br />
-            &nbsp;&nbsp;text=&#123;this.state.randomNumber}<br />
-            &nbsp;&nbsp;paused=&#123;this.state.paused}<br />
-            &nbsp;&nbsp;iterations={1}<br />
-            &nbsp;&nbsp;effect="verticalFadeIn"<br />
-            &nbsp;&nbsp;effectChange=&#123;2}<br />
-            &nbsp;&nbsp;effectDirection="up"<br />
-          />
+            
           </pre>
         </div>
       </div>
