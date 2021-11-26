@@ -216,7 +216,7 @@ const Chatrooms = (props) => {
                     : chatroomMap[selectedChatroom].info.name}
                 </h2>
                 <div>
-                    {chatroomMap[selectedChatroom].directMessage &&
+                    {!chatroomMap[selectedChatroom].directMessage &&
                         <Link to="/group-details" style={infoIconStyle}>
                             <FaIcons.FaInfoCircle/>
                         </Link>
