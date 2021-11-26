@@ -90,7 +90,7 @@ class JamAPIService {
     }
 
     updateProfile(data) {
-        return fetch(API_CALL_URL("user", "profile"), {
+        return this.apiRequest(API_CALL_URL("user", "profile"), {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
