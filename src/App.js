@@ -75,9 +75,10 @@ function App() {
                         <Route exact path="/contact-us">
                             <ContactUs/>
                         </Route>
-                        <Route exact path="/group-details">
-                            <GroupDetails apiService={apiService}/>
-                        </Route>
+                        <Route 
+                            exact path="/chatrooms/:roomID/details"
+                            render={(props) => <GroupDetails {...props} apiService={apiService} currentUser={currentUser}/>}
+                        />
                         <Route exact path="/test-upload">
                             <FileUpload 
                                 postUpload={apiService.uploadPfp.bind(apiService)}

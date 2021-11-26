@@ -239,15 +239,11 @@ class JamAPIService {
         info.headers = headersWithToken;
 
         return fetch(url, info).then(res => {
-            if (res.ok) {
-                return res;
-            } else {
-                if (res.status === 401) {
-                    this.removeSessionToken();
-                    this.history.push("/login");
-                }
-                return Promise.reject(res);
+            if (res.status === 401) {
+                this.removeSessionToken();
+                this.history.push("/login");
             }
+            return res;
         });
     }
 }
