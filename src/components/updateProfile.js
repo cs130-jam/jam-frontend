@@ -5,7 +5,8 @@ import '../App.css';
 import DropdownField from '../util/dropdownField';
 import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
-
+import useStateRef from '../util/useStateRef';
+import { useHistory } from "react-router-dom";
 
   const instrumentsListStyle = {
     margin: "0px",
@@ -54,10 +55,8 @@ const MIN_ARTIST_SEARCH_LEN = 2;
 const UpdateProfile = (props) => {
 
     const apiService = props.apiService
-    //const [buttonText, setButtonText] = useState("Yes"); //same as creating your state variable where "Next" is the default value for buttonText and setButtonText is the setter function for your state variable instead of setState
-    //const [selected, setSelected] = useState({});
-    const [loaded, setLoaded] = useState(false);
     const [pageIndex, setPageIndex] = useState(0);
+    const history = useHistory();
     
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -70,9 +69,11 @@ const UpdateProfile = (props) => {
     const [cachedSearches, setCachedSearches] = useState({});
     const [artistQueryResults, setArtistQueryResults] = useState([]);
     const [artistQuery, setArtistQuery] = useState("");
-    const [artists, setArtists] = useState([]);
+    const [artists, setArtists, artistsRef] = useStateRef([]);
+    let arts = [];
     const [isValidInterests, setIsValidInterests] = useState(true); 
     const [failMessage, setFailMessage] = useState("");
+
 
     function namesDone() {
         if (firstName.length === 0) {
@@ -140,8 +141,10 @@ const UpdateProfile = (props) => {
         if (cached && cached.page === cached.totalPages) return;
 
         let page = cached ? cached.page + 1 : 1;
+        console.log(query);
         let response = await apiService.findArtists(query, page);
         let json = await response.json();
+        console.log(json);
         if (!cached) {
             cachedSearches[query] = {
                 "page": page,
@@ -163,11 +166,17 @@ const UpdateProfile = (props) => {
         }
     }
 
-    function onArtistSelect(entry) {
-        if (artists.length >= 2) setIsValidInterests(true);
+    function onArtistSelect(entry, id) {
+        if (artistsRef.current.length >= 2) setIsValidInterests(true);
         console.log(entry);
-        setArtists([...artists, entry.content]);
+        console.log(id);
+        if(id===1)
+            setArtists([...artistsRef.current, entry]);
+        else
+            setArtists([...artistsRef.current, entry.content]);
+        //console.log(artists);
     }
+
 
     useEffect(() => {
         let cached = cachedSearches[artistQuery];
@@ -187,6 +196,8 @@ const UpdateProfile = (props) => {
                 "content": response
             };
         }));
+
+        console.log(artistQueryResults);
     }, [artistQuery, cachedSearches]);
 
     function moreEntries() {
@@ -197,14 +208,13 @@ const UpdateProfile = (props) => {
     }
 
     function removeArtist(removeEntry) {
-        setArtists(artists.filter(artist => artist.path !== removeEntry.path));
+        setArtists(artistsRef.current.filter(artist => artist.path !== removeEntry.path));
     }
 
     async function loadUser(){
         let response = await apiService.getCurrentUser();
         
         if (!response.ok) {
-          setLoaded(false);
           return;
         }
         let json = await response.json();
@@ -213,13 +223,64 @@ const UpdateProfile = (props) => {
         setFirstName(json.profile.firstName);
         setLastName(json.profile.lastName);
         setKnownInstruments(json.profile.instruments);
-        setLoaded(true);
+        
+        //setLoaded(true);
+        
+        for(let i=0; i<json.profile.musicInterests.length; i++)
+        {
+            console.log(json.profile.musicInterests[i].name);
+            let flag = true;
+            let page = 1;
+            while(flag)
+            {
+
+                let response1 = await apiService.findArtists(json.profile.musicInterests[i].name, page);
+                let json1 = await response1.json();
+                let var1 = json1.responses.filter(artist => artist.path === json.profile.musicInterests[i].path);
+                
+                page++;
+                if(var1.length!==0)
+                   { 
+                    console.log(var1[0]);
+                    onArtistSelect(var1[0], 1);
+                    arts.push( var1[0]);
+                    flag=false;
+                   }
+            }
+        }
+        
     }
 
     useEffect(() => loadUser(), []);
 
     async function updateProfile() {
-        
+        console.log("gggggg");
+        if (artists.length < 3) {
+            setIsValidInterests(false);
+            return;
+        }
+        console.log(artists);
+        let locationPromise = new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(pos => resolve(pos), error => reject(error));
+        });
+        let location = await locationPromise;
+        let response = await apiService.updateProfile({
+            "firstName": firstName,
+            "lastName": lastName,
+            "location": {
+                "longitude": location.coords.longitude.toString(),
+                "latitude": location.coords.latitude.toString()
+            },
+            "musicInterests": artists.map(artist => {
+                return {"name": artist.name, "path": artist.path}
+            }),
+            "instruments": knownInstruments
+        });
+        if (response.ok){
+            history.push("/home");
+        } 
+        console.log(response);
+
     }
 
     const pages = [
@@ -277,50 +338,49 @@ const UpdateProfile = (props) => {
                 </div>  
             </div>
         </div>
-        )
+        ),
+        (          <div className="container-fluid g-0">
+        {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
+        {failMessage.length > 0 && <Alert style={alertStyle} variant="danger">{failMessage}</Alert>}
+        <p className="jam-title-text">Favourite Artists</p>
+        <DropdownField 
+            value={artistQuery}
+            onInput={setArtistQuery}
+            label="Add Favorite Artists:" 
+            type="text"
+            hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
+            onMore={moreEntries}
+            onSelect={onArtistSelect}
+            entries={artistQueryResults}/>
+        <ul style={instrumentsListStyle}>
+            {artists.map(artist => (
+                <li className="removable-list-entry" key={artist.path}>
+                    <div style={artistContainer}>
+                        <img style={artistImageStyle} src={artist.thumb}/>
+                        <div style={artistNameStyle}>{artist.name}</div>
+                        <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
+                    </div>
+                </li>
+            ))}
+        </ul>
+        <div className="row g-0">
+            <div className="col-4">
+                <button className="jam-submit-button" onClick={prevPage}>Back</button>
+            </div>
+            <div className="col-4"></div>
+            <div className="col-4">
+                <button className="jam-submit-button" onClick={updateProfile}>Apply Changes</button>
+            </div>  
+        </div>
+    </div> )
     ];
 
     return (
 
-    
-          
           <div className="d-flex justify-content-center align-items-center">
           <div className="jam-form" style={formStyle}>
-          <div className="container-fluid g-0">
-                {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
-                {failMessage.length > 0 && <Alert style={alertStyle} variant="danger">{failMessage}</Alert>}
-                <p className="jam-title-text">Favourite Artists</p>
-                <DropdownField 
-                    value={artistQuery}
-                    onInput={setArtistQuery}
-                    label="Add Favorite Artists:" 
-                    type="text"
-                    hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
-                    onMore={moreEntries}
-                    onSelect={onArtistSelect}
-                    entries={artistQueryResults}/>
-                <ul style={instrumentsListStyle}>
-                    {artists.map(artist => (
-                        <li className="removable-list-entry" key={artist.path}>
-                            <div style={artistContainer}>
-                                <img style={artistImageStyle} src={artist.thumb}/>
-                                <div style={artistNameStyle}>{artist.name}</div>
-                                <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-                <div className="row g-0">
-                    <div className="col-4">
-                        <button className="jam-submit-button" onClick={prevPage}>Back</button>
-                    </div>
-                    <div className="col-4"></div>
-                    <div className="col-4">
-                        <button className="jam-submit-button" onClick={updateProfile}>Apply Changes</button>
-                    </div>  
-                </div>
-            </div> 
-         
+
+          {pages[pageIndex]}
             </div>
             </div>
   
