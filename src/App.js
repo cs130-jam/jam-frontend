@@ -66,7 +66,7 @@ function App() {
                             <Logout removeSessionToken={removeSessionToken}/>
                         </Route>
                         <Route exact path="/about-us">
-                            <AboutUs />
+                            <AboutUs/>
                         </Route>
                         <Route exact path="/privacy-policy">
                             <PrivacyPolicy/>

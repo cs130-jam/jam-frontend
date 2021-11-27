@@ -28,7 +28,7 @@ class JamAPIService {
     }
 
     getCurrentUserChatroom(userId){
-        return this.apiRequest(API_CALL_URL("user", userId,"chatroom"), {
+        return this.apiRequest(API_CALL_URL("user", userId, "chatroom"), {
             headers: {
                 "Accept": "application/json"
             }
@@ -213,8 +213,6 @@ class JamAPIService {
         });
     }
 
-    
-
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",
@@ -222,9 +220,7 @@ class JamAPIService {
                 "Accept": "application/json"
             },
         });
-    }
-
-    
+    }    
 
     apiRequest(url, info) {
         const headersWithToken = "headers" in info ? info.headers : {};
