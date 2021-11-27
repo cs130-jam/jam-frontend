@@ -27,6 +27,11 @@ export const SidebarData = [
     icon: <FaIcons.FaCommentAlt style={darkIcon}/>
   },
   {
+    title: 'Notifications',
+    path: '/notifications',
+    icon: <FaIcons.FaPepperHot style={darkIcon}/>
+  },
+  {
     title: 'Logout',
     path: '/logout',
     icon: <FaIcons.FaSignOutAlt style={darkIcon}/>

@@ -213,6 +213,12 @@ class JamAPIService {
         });
     }
 
+    getNotifications() {
+        return this.apiRequest(API_CALL_URL("notifications"), {
+            headers: {"Accept": "application/json"}
+        });
+    }
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",

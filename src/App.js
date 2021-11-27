@@ -19,6 +19,7 @@ import Logout from './components/logout';
 import Chatrooms from './components/chatrooms';
 import UpdateProfile from './components/updateProfile';
 import CreateChatroom from './components/createChatroom';
+import Notifications from './components/notifications';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
@@ -94,6 +95,9 @@ function App() {
                         />
                         <Route exact path="/create-chatroom">
                             <CreateChatroom apiService={apiService}/>
+                        </Route>
+                        <Route exact path="/notifications">
+                            <Notifications apiService={apiService}/>
                         </Route>
                         <Route>
                             <h1 style={notFoundStyle}>Page not found</h1>
