@@ -5,7 +5,6 @@ import useInterval from "../util/useInterval";
 import useStateRef from "../util/useStateRef";
 import useOnScreen from "../util/useOnScreen";
 import Chats from "./chats";
-import { useHistory } from "react-router";
 
 const INITIAL_FETCH_COUNT = 15;
 const FETCH_IDS_DELAY = 30000; // every 30 seconds
@@ -21,16 +20,21 @@ const roomsSectionStyle = {
     paddingLeft: "12px",
     marginLeft: "8px",
     minWidth: "240px",
-    height: "100%",
+    height: "calc(100vh - 107px - 118px)", // should be the same as in App.js
     backgroundColor: "#f2f7fc"
 };
+
+const chatSectionStyle = {
+    height: "calc(100vh - 107px - 118px)", // should be the same as in App.js
+}
 
 const chatroomInfoStyle = {
     backgroundColor: "#f2f7fc",
     minWidth: "240px",
     height: "100%",
     borderLeft: "1px solid rgba(0, 0, 0, 0.07)",
-    padding: "15px"
+    padding: "15px",
+    height: "calc(100vh - 107px - 118px)", // should be the same as in App.js
 }
 
 const roomsListStyle = {
@@ -74,7 +78,6 @@ const Chatrooms = (props) => {
     const apiService = props.apiService;
     const currentUser = props.currentUser;
     const sessionToken = props.sessionToken;
-    const history = useHistory();
 
     const [chatroomIds, setChatroomIds] = useState([]);
     const [chatroomMap, setChatroomMap, chatroomMapRef] = useStateRef({});
@@ -201,7 +204,7 @@ const Chatrooms = (props) => {
                 <li ref={loadMoreRef} key="LOAD MORE"></li>
             </ul>
         </div>
-        <div className="col">
+        <div className="col" style={chatSectionStyle}>
             {selectedChatroom.length > 0 && <Chats
                 roomId={selectedChatroom}
                 chatsMap={chatsMap}
