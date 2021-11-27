@@ -5,6 +5,7 @@ import useInterval from "../util/useInterval";
 import useStateRef from "../util/useStateRef";
 import useOnScreen from "../util/useOnScreen";
 import Chats from "./chats";
+import { useHistory } from "react-router";
 
 const INITIAL_FETCH_COUNT = 15;
 const FETCH_IDS_DELAY = 30000; // every 30 seconds
@@ -73,6 +74,7 @@ const Chatrooms = (props) => {
     const apiService = props.apiService;
     const currentUser = props.currentUser;
     const sessionToken = props.sessionToken;
+    const history = useHistory();
 
     const [chatroomIds, setChatroomIds] = useState([]);
     const [chatroomMap, setChatroomMap, chatroomMapRef] = useStateRef({});
@@ -218,13 +220,13 @@ const Chatrooms = (props) => {
                 </h2>
                 <div>
                     {!chatroomMap[selectedChatroom].directMessage &&
-                        <Link to="/group-details" style={infoIconStyle}>
+                        <Link to={`/chatrooms/${selectedChatroom}/details`} style={infoIconStyle}>
                             <FaIcons.FaInfoCircle/>
                         </Link>
                     }
                     <h4>Members:</h4>
                     {[currentUser, ...chatroomMap[selectedChatroom].otherMembers].map(user => 
-                        <Link key={user.id} to="/user-profile" className="chatroom-member-entry">
+                        <Link key={user.id} to={`/user/${user.id}`} className="chatroom-member-entry">
                             {user.profile.firstName + " " + user.profile.lastName}
                         </Link>
                     )}
