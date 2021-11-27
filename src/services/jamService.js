@@ -57,6 +57,13 @@ class JamAPIService {
         })
     }
 
+    unFriend(userId) {
+        return this.apiRequest(API_CALL_URL("friends",userId), {
+            method: "DELETE",
+            headers: {"Accept": "application/json"}
+        });
+    }
+
     getRec(){
         return this.apiRequest(API_CALL_URL("match"), {
             method: "GET",
@@ -206,6 +213,8 @@ class JamAPIService {
         });
     }
 
+    
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",
@@ -214,6 +223,8 @@ class JamAPIService {
             },
         });
     }
+
+    
 
     apiRequest(url, info) {
         const headersWithToken = "headers" in info ? info.headers : {};
