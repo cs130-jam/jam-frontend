@@ -106,6 +106,16 @@ class JamAPIService {
         });
     }
 
+    updatePreferences(data) {
+        return this.apiRequest(API_CALL_URL("user", "preferences"), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
     existingUser(username) {
         return fetch(API_QUERY_PARAMS(API_CALL_URL("internal", "user"), {
             "username": username

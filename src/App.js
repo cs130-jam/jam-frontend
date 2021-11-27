@@ -36,7 +36,7 @@ const notFoundStyle = {
 function App() {
     const history = useHistory();
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
-    const [currentUser, setCurrentUser] = useState({});
+    const [currentUser, setCurrentUser] = useState({"id": ""});
     const apiService = new JamAPIService(sessionToken, removeSessionToken, history);
 
     useEffect(() => getCurrentUserId(), [sessionToken]);
@@ -79,9 +79,10 @@ function App() {
                                 postUpload={apiService.uploadPfp.bind(apiService)}
                                 getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
                         </Route>
-                        <Route exact path="/update-profile">
-                            <UpdateProfile apiService = {apiService}/>
-                        </Route>
+                        <Route 
+                            exact path={["/user", "/user/:userId"]}
+                            render={(props) => <UpdateProfile {...props} apiService={apiService} currentUser={currentUser}/>}
+                        />
                         <Route exact path="/find-friend">
                             <FindFriend apiService = {apiService}/>
                         </Route>
