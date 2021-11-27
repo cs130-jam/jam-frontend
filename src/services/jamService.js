@@ -89,6 +89,16 @@ class JamAPIService {
         });
     }
 
+    updateProfile(data) {
+        return this.apiRequest(API_CALL_URL("user", "profile"), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
     existingUser(username) {
         return fetch(API_QUERY_PARAMS(API_CALL_URL("internal", "user"), {
             "username": username
@@ -109,6 +119,15 @@ class JamAPIService {
             headers: {
                 "Accept": "application/json"
             },
+        });
+    }
+
+    getTypes(){
+        return this.apiRequest(API_CALL_URL("music","types"), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
         });
     }
 

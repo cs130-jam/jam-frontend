@@ -93,9 +93,10 @@ function App() {
                         <Route exact path="/view-friends">
                             <ViewFriends apiService = {apiService}/>
                         </Route>
-                        <Route exact path="/chatrooms">
-                            <Chatrooms apiService={apiService} currentUser={currentUser} sessionToken={sessionToken}/>
-                        </Route>
+                        <Route 
+                            exact path={["/chatrooms", "/chatrooms/:roomId"]}
+                            render={(props) => <Chatrooms {...props} apiService={apiService} currentUser={currentUser} sessionToken={sessionToken}/>}
+                        />
                         <Route exact path="/create-chatroom">
                             <CreateChatroom apiService={apiService}/>
                         </Route>

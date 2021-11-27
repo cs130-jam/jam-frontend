@@ -27,7 +27,8 @@ const button={
 
   const StyledTable = {
     
-    margin: "auto"
+    margin: "auto",
+    textAlign: "center"
   
   }
 
@@ -91,7 +92,7 @@ const button={
 
   const ViewFriends = (props) => {
    const apiService = props.apiService
-   const [user, setUsers] = useState([]);
+   const [users, setUsers] = useState([]);
     const [loadeds, setLoadeds] = useState(false);
     const history = useHistory();
     async function loadUsers(){
@@ -106,15 +107,13 @@ const button={
         else return;
       }
 //api to take to the chatroom
-      async function handleClick(){
-        console.log(user.id);
-        let response = await apiService.getCurrentUserChatroom(user.id);   
+      async function handleClick(userId){
+        let response = await apiService.getCurrentUserChatroom(userId);   
         if (!response.ok) return;
         let json = await response.json();
         //console.log(json);
         let chatroomId = json.roomId;
-        let path = '/chatrooms/${chatroomId}'      
-        history.push(path);
+        history.push(`/chatrooms/${chatroomId}`);
       }
 
     
@@ -132,17 +131,17 @@ const button={
                 </tr>
             </thead>
             <tbody>
-               {user && user.map(user =>
+               {users && users.map(user =>
                     <tr key = {user.id}>
-                        <td>{user.profile.firstName} {user.profile.lastName}</td>
+                        <td style = {textalign}>{user.profile.firstName} {user.profile.lastName}</td>
                         
-                        <td><button onClick = {handleClick}>Message</button></td>
+                        <td style ={textalign}><button onClick = {() => handleClick(user.id)}>Message</button></td>
                     </tr>
                 )}
             </tbody>
         </table>
     </div>
-);
-               }
+);               
+}
                            
-                           export default ViewFriends;
+export default ViewFriends;
