@@ -1,6 +1,7 @@
 import React, {useState, useRef,useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import '../App.css';
+import ProfileImage from '../util/profileImage';
 
 
 const button={
@@ -32,14 +33,14 @@ const button={
 
   const nameStyle = {
     color: "black",
-    fontSize:"80px",
+    fontSize:"60px",
     //margin: '0px',
     fontFamily: "lato"
   };
 
   const bioStyle = {
     color: "black",
-    fontSize:"40px",
+    fontSize:"30px",
     fontStyle:"italic",
     fontFamily: "lato"
   };
@@ -58,42 +59,6 @@ const button={
     fontFamily: "lato"
   };
 
-
-const users = [
-    {
-        profile:{
-      firstName: 'Charlie',
-      lastName:'Chap'
-                },
-    instruments: ['guitar','drums'],            
-    bio:"this is my bio"
-    },
-    {profile:{
-      firstName: 'Mac',
-      lastName: 'Musk'
-    },
-    instruments: ['Sitar','Piano'],
-    bio: "this is mac's bio"
-    },
-
-    {profile:{
-        firstName: 'Andrew',
-        lastName: 'Cummings'
-      },
-      instruments: ['guitar','drums','guitar','drums','guitar','drums'],
-      bio: "this is Andrew's bio"
-      },
-
-      {profile:{
-        firstName: 'Keerthi',
-        lastName: 'Sri'
-        
-      },
-      instruments: ['sings'],
-      bio: "this is K's bio"
-      },
-    
-  ];
 const FindFriend = (props) => {
     
     const apiService = props.apiService
@@ -143,6 +108,7 @@ const FindFriend = (props) => {
         <div>
               <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
                      
+                            <ProfileImage url={selected.profile.pfpUrl} size={350}/>
                             <div style = {bioStyle} className="text-center">bio: {selected.profile.bio}</div> 
                             <table style = {StyledTable}><tr><td style = {JS}>Music Interests:</td><td style = {jobStyle} className="text-center">{selected.profile.musicInterests[0].name}, {selected.profile.musicInterests[1].name}, {selected.profile.musicInterests[2].name}</td></tr></table>      
                             <table style = {StyledTable}><tr><td style = {JS}>Instruments known:</td><td style = {jobStyle} className="text-center">{selected.profile.instruments.join(", ")}</td></tr></table>      

@@ -209,6 +209,35 @@ class JamAPIService {
         });
     }
 
+    leaveGroup(roomId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId, "leave"), {
+            method: "POST",
+            headers: 
+            {
+                "Accept": "application/json"
+            }
+        });
+    }
+
+    deleteGroup(roomId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId), {
+            method: "DELETE",
+            headers: {"Accept": "application/json"}
+        });
+    }
+
+    inviteMember(roomId, userId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId, "invite", userId), {
+            method: "PUT"
+        })
+    }
+
+    removeMember(roomId, userId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId, "members", userId), {
+            method: "DELETE"
+        });
+    }
+    
     createChatroom(roomData) {
         return this.apiRequest(API_CALL_URL("chatroom"), {
             method: "POST",
@@ -272,6 +301,25 @@ class JamAPIService {
             },
         });
     }    
+
+    getChatRoomDetails(roomId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId), {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+    }
+
+    setChatRoomDetails(roomId, info) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId, "info"), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(info)
+        })
+    }
 
     apiRequest(url, info) {
         const headersWithToken = "headers" in info ? info.headers : {};
