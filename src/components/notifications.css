@@ -6,8 +6,14 @@
 
 }
 
-.notification-entry:hover{
-    background-color: rgba(0, 0, 0, 0.1);
+.notification-entry:first-child {
+    border-top: 1px solid black;
 }
 
+.notification-entry .icon {
+    margin-left: 8px;
+}
 
+.notification-entry .icon:hover{
+    cursor: pointer;
+}

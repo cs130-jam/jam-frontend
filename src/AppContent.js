@@ -98,7 +98,7 @@ function AppContent() {
                             <CreateChatroom apiService={apiService}/>
                         </Route>
                         <Route exact path="/notifications">
-                            <Notifications />
+                            <Notifications apiService={apiService}/>
                         </Route>
                         <Route>
                             <h1 style={notFoundStyle}>Page not found</h1>

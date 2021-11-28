@@ -345,12 +345,13 @@ const UpdateProfile = (props) => {
         if (isCurrentUser) return;
         let response = await apiService.friend(pathUserId);
         if (!response.ok) return;
+        window.alert("Friend request sent!");
         loadUser();
     }
 
     async function removeFriend() {
         if (isCurrentUser) return;
-        if (!alert(`Are you sure you want to unfriend ${profile.firstName} ${profile.lastName}?`)) return;
+        if (!window.confirm(`Are you sure you want to unfriend ${profile.firstName} ${profile.lastName}?`)) return;
         let response = await apiService.unFriend(pathUserId);
         if (!response.ok) return;
         loadUser();

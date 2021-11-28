@@ -24,7 +24,7 @@ export const SidebarData = [
   {
     title: 'Notifications',
     path: '/notifications',
-    icon: <FaIcons.FaPepperHot style={darkIcon}/>
+    icon: <FaIcons.FaBell style={darkIcon}/>
   },
   {
     title: 'Profile',

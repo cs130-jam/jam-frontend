@@ -46,7 +46,7 @@ class JamAPIService {
         })
     }
 
-    remNotifications(userId) {
+    remNotification(userId) {
         return this.apiRequest(API_CALL_URL("notifications",userId,"remove"), {
             method: "POST",
             headers: {
@@ -55,7 +55,7 @@ class JamAPIService {
         })
     }
 
-    rejNotifications(userId) {
+    rejNotification(userId) {
         return this.apiRequest(API_CALL_URL("notifications",userId,"reject"), {
             method: "POST",
             headers: {
@@ -64,7 +64,7 @@ class JamAPIService {
         })
     }
 
-    accNotifications(userId) {
+    accNotification(userId) {
         return this.apiRequest(API_CALL_URL("notifications",userId,"accept"), {
             method: "POST",
             headers: {

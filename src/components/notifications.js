@@ -3,11 +3,20 @@ import * as FaIcons from 'react-icons/fa';
 import React from 'react';
 import "./notifications.css";
 
-const listStyle = {
-    margin: "0 auto",
+const container = {
+    margin: "24px auto",
     width: "800px",
+    padding: "16px",
+    border: "1px solid #c9c9c9",
+    borderRadius: "5px",
+    background: "#f5f5f5"
+};
+
+const listStyle = {
+    width: "100%",
     listStyle: "none",
-    marginTop: "40px"
+    marginTop: "20px",
+    padding: "0px"
 }
 
 const notifStyle = {
@@ -15,6 +24,10 @@ const notifStyle = {
     marginTop: "8px"
 }
 
+const subtitle = {
+    marginTop: "20px",
+    color: "grey"
+};
 
 const Notifications = (props) => {
     const apiService = props.apiService;
@@ -49,18 +62,20 @@ const Notifications = (props) => {
     }
     useEffect(() => getNotifications(), []);
 
-    return (<ul style = {listStyle}>
-        {notifications.map(notification =>
-            <li> 
-                <div className="notification-entry">{notification.title} 
-                    <button onClick={acceptNotification(notification.id)}> <FaIcons.FaCheck style={notifStyle}/> </button> 
-                    <button onClick={rejectNotification(notification.id)}> <FaIcons.FaRegTimesCircle style={notifStyle} /> </button> 
-                    <button onClick={removeNotification(notification.id)}> <FaIcons.FaTrashAlt style={notifStyle}/> </button>
-                </div>
+    return (<div style={container}>
+        <h1>Notifications</h1>
+        {notifications.length === 0 && <h3 style={subtitle}>No notifications.</h3>}
+        <ul style = {listStyle}>
+            {notifications.map(notification =>
+                <li className="notification-entry"> 
+                    {notification.title} 
+                    <FaIcons.FaTrashAlt className="icon" onClick={() => removeNotification(notification.id)} style={notifStyle}/>
+                    {notification.canReject && <FaIcons.FaRegTimesCircle className="icon" onClick={() => rejectNotification(notification.id)} style={notifStyle}/>} 
+                    {notification.canAccept && <FaIcons.FaCheck className="icon" onClick={() => acceptNotification(notification.id)} style={notifStyle}/>}
                 </li> 
-        )}
-    </ul>
-    );
+            )}
+        </ul>
+    </div>);
 };
 
 export default Notifications;
