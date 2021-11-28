@@ -1,0 +1,13 @@
+.notification-entry{
+    width: 100%;
+    font-size: 24pt;
+    border-bottom: 1px solid black;
+    padding: 8px;
+
+}
+
+.notification-entry:hover{
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
