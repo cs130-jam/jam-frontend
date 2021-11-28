@@ -5,7 +5,7 @@ import chai, {expect} from "chai";
 var jsdom = require("mocha-jsdom");
 import { render, unmountComponentAtNode } from "react-dom";
 import { MemoryRouter } from "react-router-dom";
-import App from "../App";
+import AppContent from "../AppContent";
 import Login from './components/login';
 import Header from './components/header';
 import Footer from './components/footer';
@@ -40,7 +40,7 @@ afterEach(() => {
   rootContainer = null;
 });
 
-describe("App Component Testing", () => {
+describe("AppContent Component Testing", () => {
   
  /* it("adds 1 and 2", ()=>{
     chai.expect(sum(1,2)).to.equal(3);
