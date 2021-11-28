@@ -8,8 +8,9 @@ const filePickerStyle = {
 };
 
 const subButtonStyle = {
-    marginTop: "4px"
-}
+    marginTop: "4px",
+    marginBottom: "0px"
+};
 
 const FileUpload = (props) => {
     const postUpload = props.postUpload;
