@@ -32,7 +32,7 @@ const button={
 
   const nameStyle = {
     color: "black",
-    fontSize:"100px",
+    fontSize:"80px",
     //margin: '0px',
     fontFamily: "lato"
   };
@@ -53,7 +53,7 @@ const button={
 
   const JS = {
     color: "black",
-    fontSize:"30px",
+    fontSize:"20px",
     fontWeight:"Bold",
     fontFamily: "lato"
   };
@@ -142,8 +142,9 @@ const FindFriend = (props) => {
     return ( loaded &&
         <div>
               <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
-              <div style = {bioStyle} className="text-center">This is my bio</div>  
-                            <div style = {bioStyle} className="text-center">{selected.bio}</div> 
+                     
+                            <div style = {bioStyle} className="text-center">bio: {selected.profile.bio}</div> 
+                            <table style = {StyledTable}><tr><td style = {JS}>Music Interests:</td><td style = {jobStyle} className="text-center">{selected.profile.musicInterests[0].name}, {selected.profile.musicInterests[1].name}, {selected.profile.musicInterests[2].name}</td></tr></table>      
                             <table style = {StyledTable}><tr><td style = {JS}>Instruments known:</td><td style = {jobStyle} className="text-center">{selected.profile.instruments.join(", ")}</td></tr></table>      
                                                     
                             <table style = {StyledTable}>   

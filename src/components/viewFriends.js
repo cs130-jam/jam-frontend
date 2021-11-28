@@ -116,6 +116,12 @@ const button={
         history.push(`/chatrooms/${chatroomId}`);
       }
 
+      async function clickToUnfriend(userId){
+        let response = await apiService.unFriend(userId);   
+        if (!response.ok) return;
+        loadUsers();
+      }
+
     
     
    useEffect(() => loadUsers(), []);
@@ -127,7 +133,8 @@ const button={
                 <tr>
                     <th>Name</th>
                    
-                    <th>Action</th>
+                    <th>Message</th>
+                    <th>Unfriend</th>
                 </tr>
             </thead>
             <tbody>
@@ -136,6 +143,8 @@ const button={
                         <td style = {textalign}>{user.profile.firstName} {user.profile.lastName}</td>
                         
                         <td style ={textalign}><button onClick = {() => handleClick(user.id)}>Message</button></td>
+                        <td style ={textalign}><button onClick = {() => clickToUnfriend(user.id)}>Unfriend</button></td>
+                    
                     </tr>
                 )}
             </tbody>

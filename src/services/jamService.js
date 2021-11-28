@@ -28,7 +28,7 @@ class JamAPIService {
     }
 
     getCurrentUserChatroom(userId){
-        return this.apiRequest(API_CALL_URL("user", userId,"chatroom"), {
+        return this.apiRequest(API_CALL_URL("user", userId, "chatroom"), {
             headers: {
                 "Accept": "application/json"
             }
@@ -55,6 +55,13 @@ class JamAPIService {
             body: JSON.stringify({"userId":userId})
            
         })
+    }
+
+    unFriend(userId) {
+        return this.apiRequest(API_CALL_URL("friends",userId), {
+            method: "DELETE",
+            headers: {"Accept": "application/json"}
+        });
     }
 
     getRec(){
@@ -231,7 +238,7 @@ class JamAPIService {
                 "Accept": "application/json"
             },
         });
-    }
+    }    
 
     getChatRoomDetails(roomID) {
         return this.apiRequest(API_CALL_URL("chatroom", roomID), {

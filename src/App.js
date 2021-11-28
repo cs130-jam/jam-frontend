@@ -23,7 +23,7 @@ import CreateChatroom from './components/createChatroom';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    height: "calc(100vh - 107px - 118px)", // values determined from header and footer height
+    minHeight: "calc(100vh - 107px - 118px)", // values determined from header and footer height
     position: "relative"
 };
 
@@ -67,7 +67,7 @@ function App() {
                             <Logout removeSessionToken={removeSessionToken}/>
                         </Route>
                         <Route exact path="/about-us">
-                            <AboutUs />
+                            <AboutUs/>
                         </Route>
                         <Route exact path="/privacy-policy">
                             <PrivacyPolicy/>
