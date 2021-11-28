@@ -20,6 +20,7 @@ import Chatrooms from './components/chatrooms';
 import UpdateProfile from './components/updateProfile';
 import CreateChatroom from './components/createChatroom';
 import Notifications from './components/notifications';
+import GroupDetails from './components/groupDetails';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
@@ -75,11 +76,8 @@ function AppContent() {
                         <Route exact path="/contact-us">
                             <ContactUs/>
                         </Route>
-                        <Route exact path="/test-upload">
-                            <FileUpload 
-                                postUpload={apiService.uploadPfp.bind(apiService)}
-                                getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
-                        </Route>
+                        <Route exact path="/chatrooms/:roomId/details"
+                            render={(props) => <GroupDetails {...props} apiService={apiService} currentUser={currentUser}/>}/>
                         <Route 
                             exact path={["/user", "/user/:userId"]}
                             render={(props) => <UpdateProfile {...props} apiService={apiService} currentUser={currentUser}/>}
