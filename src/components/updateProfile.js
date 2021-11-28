@@ -8,10 +8,9 @@ import { Alert } from 'react-bootstrap';
 import InputTextarea from '../util/inputTextarea';
 import FileUpload from '../util/imageUpload';
 import { useHistory } from 'react-router';
+import ProfileImage from '../util/profileImage';
 
-const FALLBACK_IMG = "https://i.pinimg.com/originals/0c/3b/3a/0c3b3adb1a7530892e55ef36d3be6cb8.png";
-
-const no_op = () => {};
+const no_op = () => null;
 
 const bioStyle = {
     height: "100%",
@@ -71,31 +70,12 @@ const jamForm = {
     width: "800px"
 };
 
-const pfpWidthStyle = {
-    width: "100%"
-};
-
-const pfpHeightStyle = {
-    height: "100%"
-};
-
-const cropStyle = {
-    maxWidth: "340px",
-    aspectRatio: "1",
-    overflow: "hidden",
-    margin: "0 auto",
-    borderRadius: "10px",
-    backgroundColor: "white",
-    border: "1px solid rgba(0, 0, 0, 0.08)"
-};
-
 const centeredStyle = {
     maxWidth: "340px",
     margin: "4px auto"
 };
 
 const redButtonStyle = {
-    backgroundColor: "rgb(235, 94, 94)",
     marginTop: "6px"
 };
 
@@ -124,10 +104,6 @@ const UpdateProfile = (props) => {
     const [artistQueryResults, setArtistQueryResults] = useState([]);
     const [artistQuery, setArtistQuery] = useState("");
     const [isValidInterests, setIsValidInterests] = useState(true);
-
-    const [pfpTimestamp, setPfpTimestamp] = useState(Date.now());
-    const [pfpStyle, _setPfpStyle] = useState(pfpHeightStyle);
-    const pfpRef = useRef();
 
     function matchingPrefixIgnoreCase(prefix, entries) {
         prefix = prefix.toLowerCase();
@@ -329,16 +305,7 @@ const UpdateProfile = (props) => {
         let response = await apiService.uploadPfp(pfpForm);
         await new Promise(resolve => setTimeout(resolve, 5000));
         await loadUser();
-        setPfpTimestamp(Date.now());
         return response;
-    }
-
-    function setPfpStyle() {
-        if (pfpRef.current.width > pfpRef.current.height) {
-            _setPfpStyle(pfpHeightStyle);
-        } else {
-            _setPfpStyle(pfpWidthStyle);
-        }
     }
 
     async function addFriend() {
@@ -373,16 +340,7 @@ const UpdateProfile = (props) => {
                     <div className="row">
                         <div className="col-6">
                             <div style={centeredStyle}>
-                                <div style={cropStyle}>
-                                    <img 
-                                        ref={pfpRef}
-                                        style={pfpStyle}
-                                        key={pfpTimestamp}
-                                        src={"http://localhost" + profile.pfpUrl}
-                                        onLoad={setPfpStyle}
-                                        onError={(e)=>{e.target.onerror = null; e.target.src=FALLBACK_IMG}}
-                                        />
-                                </div>
+                                <ProfileImage url={profile.pfpUrl} size={340}/>
                                 {isCurrentUser && <FileUpload 
                                     postUpload={uploadPfp}
                                     getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>}
@@ -392,7 +350,7 @@ const UpdateProfile = (props) => {
                             <InputTextarea style={bioStyle} value={profile.bio} onInput={isCurrentUser ? setBio : no_op} label="Biography:" type="text"/>
                             {!isCurrentUser && <button style={topButtonStyle} onClick={sendMessage} className="jam-submit-button">Send Message</button>}
                             {!isFriend && !isCurrentUser && <button style={{marginTop: "6px"}} onClick={addFriend} className="jam-submit-button">Add Friend</button>}
-                            {isFriend && <button style={redButtonStyle} onClick={removeFriend} className="jam-submit-button">Remove Friend</button>}
+                            {isFriend && <button style={redButtonStyle} onClick={removeFriend} className="jam-warning jam-submit-button">Remove Friend</button>}
                         </div>
                     </div>
                     <div className="row">

@@ -215,4 +215,14 @@
     border: 1px solid #c9c9c9;
     position: relative;
     margin-top: 5px;
+    padding: 8px;
+    padding-left: 16px
+}
+
+.jam-warning {
+    background-color: rgb(235, 94, 94);
+}
+
+.icon-btn:hover {
+    cursor: pointer;
 }

@@ -10,7 +10,7 @@ const useCookie = (key, options = {}) => {
         return null;
     });
     
-    const setValue = (value, options) => {
+    const setValue = (value) => {
         setItemValue(value);
         cookies.set(key, value, options);
     };
