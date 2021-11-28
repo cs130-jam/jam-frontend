@@ -1,0 +1,19 @@
+.notification-entry{
+    width: 100%;
+    font-size: 24pt;
+    border-bottom: 1px solid black;
+    padding: 8px;
+
+}
+
+.notification-entry:first-child {
+    border-top: 1px solid black;
+}
+
+.notification-entry .icon {
+    margin-left: 8px;
+}
+
+.notification-entry .icon:hover{
+    cursor: pointer;
+}

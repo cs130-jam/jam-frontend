@@ -46,6 +46,33 @@ class JamAPIService {
         })
     }
 
+    remNotification(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"remove"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
+    rejNotification(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"reject"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
+    accNotification(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"accept"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
     acceptMatch(userId){
         return this.apiRequest(API_CALL_URL("match","accept"), {
             method: "POST",
@@ -55,6 +82,13 @@ class JamAPIService {
             body: JSON.stringify({"userId":userId})
            
         })
+    }
+
+    friend(userId) {
+        return this.apiRequest(API_CALL_URL("friends", userId), {
+            method: "PUT",
+            headers: {"Accept": "application/json"}
+        });
     }
 
     unFriend(userId) {
@@ -98,6 +132,16 @@ class JamAPIService {
 
     updateProfile(data) {
         return this.apiRequest(API_CALL_URL("user", "profile"), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
+    updatePreferences(data) {
+        return this.apiRequest(API_CALL_URL("user", "preferences"), {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -230,6 +274,13 @@ class JamAPIService {
             headers: {"Accept": "application/json"}
         });
     }
+
+    getNotifications() {
+        return this.apiRequest(API_CALL_URL("notifications"), {
+            headers: {"Accept": "application/json"}
+        });
+    }
+
 
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
