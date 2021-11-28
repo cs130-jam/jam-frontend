@@ -7,12 +7,17 @@ const darkIcon = {
 
 export const SidebarData = [
   {
+    title: 'Update Profile',
+    path: '/update-profile',
+    icon: <FaIcons.FaUserEdit style={darkIcon}/>,
+  },
+  {
     title: 'Suggestions',
     path: '/find-friend',
     icon: <FaIcons.FaHandPaper style={darkIcon}/>,
   },
   {
-    title: 'Friends',
+    title: 'My Friends',
     path: '/view-friends',
     icon: <FaIcons.FaUserFriends style={darkIcon}/>,
   },
@@ -24,12 +29,7 @@ export const SidebarData = [
   {
     title: 'Notifications',
     path: '/notifications',
-    icon: <FaIcons.FaBell style={darkIcon}/>
-  },
-  {
-    title: 'Profile',
-    path: '/user',
-    icon: <FaIcons.FaUserEdit style={darkIcon}/>,
+    icon: <FaIcons.FaConciergeBell style={darkIcon}/>
   },
   {
     title: 'Logout',

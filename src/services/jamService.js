@@ -46,6 +46,33 @@ class JamAPIService {
         })
     }
 
+    remNotification(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"remove"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
+    rejNotification(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"reject"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
+    accNotification(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"accept"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
     acceptMatch(userId){
         return this.apiRequest(API_CALL_URL("match","accept"), {
             method: "POST",
@@ -55,6 +82,13 @@ class JamAPIService {
             body: JSON.stringify({"userId":userId})
            
         })
+    }
+
+    friend(userId) {
+        return this.apiRequest(API_CALL_URL("friends", userId), {
+            method: "PUT",
+            headers: {"Accept": "application/json"}
+        });
     }
 
     unFriend(userId) {
@@ -223,6 +257,13 @@ class JamAPIService {
         });
     }
 
+    getNotifications() {
+        return this.apiRequest(API_CALL_URL("notifications"), {
+            headers: {"Accept": "application/json"}
+        });
+    }
+
+
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",
@@ -238,15 +279,11 @@ class JamAPIService {
         info.headers = headersWithToken;
 
         return fetch(url, info).then(res => {
-            if (res.ok) {
-                return res;
-            } else {
-                if (res.status === 401) {
-                    this.removeSessionToken();
-                    this.history.push("/login");
-                }
-                return Promise.reject(res);
+            if (res.status === 401) {
+                this.removeSessionToken();
+                this.history.push("/login");
             }
+            return res;
         });
     }
 }

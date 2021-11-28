@@ -7,8 +7,32 @@ import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
 import InputTextarea from '../util/inputTextarea';
 import FileUpload from '../util/imageUpload';
+import { useHistory } from 'react-router';
 
 const FALLBACK_IMG = "https://i.pinimg.com/originals/0c/3b/3a/0c3b3adb1a7530892e55ef36d3be6cb8.png";
+
+const no_op = () => {};
+
+const bioStyle = {
+    height: "100%",
+    maxHeight: "340px",
+    marginBottom: "8px"
+};
+
+const titleStyle = {
+    marginBottom: "8px",
+    fontSize: "22pt"
+};
+
+const topButtonStyle = {
+    marginTop: "auto",
+    marginBottom: "0px"
+};
+
+const buttonsContainer = {
+    display: "flex",
+    flexDirection: "column"
+};
 
 const instrumentsListStyle = {
     margin: "0px",
@@ -48,24 +72,31 @@ const jamForm = {
 };
 
 const pfpWidthStyle = {
-    width: "250px"
+    width: "100%"
 };
 
 const pfpHeightStyle = {
-    height: "250px"
+    height: "100%"
 };
 
 const cropStyle = {
-    width: "250px",
-    height: "250px",
+    maxWidth: "340px",
+    aspectRatio: "1",
     overflow: "hidden",
     margin: "0 auto",
-    borderRadius: "10px"
+    borderRadius: "10px",
+    backgroundColor: "white",
+    border: "1px solid rgba(0, 0, 0, 0.08)"
 };
 
 const centeredStyle = {
-    width: "250px",
+    maxWidth: "340px",
     margin: "4px auto"
+};
+
+const redButtonStyle = {
+    backgroundColor: "rgb(235, 94, 94)",
+    marginTop: "6px"
 };
 
 const ARTIST_SEARCH_DELAY = 1000; // every second
@@ -76,10 +107,12 @@ const UpdateProfile = (props) => {
     const currentUser = props.currentUser;
     const pathUserId = props.match.params.userId ? props.match.params.userId : props.currentUser.id;
     const isCurrentUser = currentUser.id === pathUserId;
+    const history = useHistory();
 
     const [loaded, setLoaded] = useState(false);
     const [profile, setProfile] = useState({});
     const [preferences, setPreferences] = useState({})
+    const [isFriend, setIsFriend] = useState(false);
 
     const [instruments, setInstruments] = useState([]);
     const [filteredInstruments, setFilteredInstruments] = useState([]);
@@ -261,6 +294,15 @@ const UpdateProfile = (props) => {
         if (isCurrentUser) {
             setPreferences(json.preferences);
         }
+
+        if (!isCurrentUser) {
+            let friendsResponse = await apiService.getFriendIds();
+            if (friendsResponse.ok) {
+                let friendIds = await friendsResponse.json();
+                setIsFriend(friendIds.includes(pathUserId));
+            }
+        }
+
         setLoaded(true);
     }
     useEffect(() => loadUser(), [currentUser]);
@@ -299,45 +341,78 @@ const UpdateProfile = (props) => {
         }
     }
 
+    async function addFriend() {
+        if (isCurrentUser) return;
+        let response = await apiService.friend(pathUserId);
+        if (!response.ok) return;
+        window.alert("Friend request sent!");
+        loadUser();
+    }
+
+    async function removeFriend() {
+        if (isCurrentUser) return;
+        if (!window.confirm(`Are you sure you want to unfriend ${profile.firstName} ${profile.lastName}?`)) return;
+        let response = await apiService.unFriend(pathUserId);
+        if (!response.ok) return;
+        loadUser();
+    }
+
+    async function sendMessage() {
+        if (isCurrentUser) return;
+        let response = await apiService.getCurrentUserChatroom(pathUserId);   
+        if (!response.ok) return;
+        let json = await response.json();
+        history.push(`/chatrooms/${json.roomId}`);
+    }
+
     return (loaded &&
         <div className="d-flex justify-content-center align-items-center">
             <div className="jam-form" style={jamForm}>
                 <div className="container-fluid g-0">
-                    <p className="jam-title-text">User Profile</p>
-                    <div style={centeredStyle}>
-                        <div style={cropStyle}>
-                            <img 
-                                ref={pfpRef}
-                                style={pfpStyle}
-                                key={pfpTimestamp}
-                                src={"http://localhost" + profile.pfpUrl}
-                                onLoad={setPfpStyle}
-                                onError={(e)=>{e.target.onerror = null; e.target.src=FALLBACK_IMG}}
-                                />
+                    <p className="jam-title-text" style={titleStyle}>User Profile</p>
+                    <div className="row">
+                        <div className="col-6">
+                            <div style={centeredStyle}>
+                                <div style={cropStyle}>
+                                    <img 
+                                        ref={pfpRef}
+                                        style={pfpStyle}
+                                        key={pfpTimestamp}
+                                        src={"http://localhost" + profile.pfpUrl}
+                                        onLoad={setPfpStyle}
+                                        onError={(e)=>{e.target.onerror = null; e.target.src=FALLBACK_IMG}}
+                                        />
+                                </div>
+                                {isCurrentUser && <FileUpload 
+                                    postUpload={uploadPfp}
+                                    getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>}
+                            </div>
                         </div>
-                        {isCurrentUser && <FileUpload 
-                            postUpload={uploadPfp}
-                            getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>}
+                        <div style={buttonsContainer} className="col-6">
+                            <InputTextarea style={bioStyle} value={profile.bio} onInput={isCurrentUser ? setBio : no_op} label="Biography:" type="text"/>
+                            {!isCurrentUser && <button style={topButtonStyle} onClick={sendMessage} className="jam-submit-button">Send Message</button>}
+                            {!isFriend && !isCurrentUser && <button style={{marginTop: "6px"}} onClick={addFriend} className="jam-submit-button">Add Friend</button>}
+                            {isFriend && <button style={redButtonStyle} onClick={removeFriend} className="jam-submit-button">Remove Friend</button>}
+                        </div>
                     </div>
-                    
                     <div className="row">
                         <div className="col-6">
                             <ErrorInputField
                                 value={profile.firstName}
-                                onInput={setFirstName}
+                                onInput={isCurrentUser ? setFirstName : no_op}
                                 label="First Name: " 
                                 type="text"
                                 isError={profile.firstName.length === 0}
                                 message="First name is required"/>
-                            <InputField value={profile.lastName} onInput={setLastName} label="Last Name:" type="text"/>
                         </div>
                         <div className="col-6">
-                            <InputTextarea value={profile.bio} onInput={setBio} label="Biography:" type="text"/>
+                            <InputField value={profile.lastName} onInput={isCurrentUser ? setLastName : no_op} label="Last Name:" type="text"/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-6">
-                            <DropdownField 
+                            {!isCurrentUser && <label className="jam-form-label">Known Instruments:</label>}
+                            {isCurrentUser && <DropdownField 
                                 value={instQuery}
                                 onInput={setInstQuery}
                                 label="Known Instruments:" 
@@ -347,19 +422,20 @@ const UpdateProfile = (props) => {
                                 entries = {filteredInstruments.map(inst => {return {
                                     name: inst, 
                                     html: (<span>{inst}</span>)
-                                }})}/>
+                                }})}/>}
                             <ul style={instrumentsListStyle}>
                                 {profile.instruments.map(instrument => (
                                     <li className="removable-list-entry" key={instrument}>
                                         <span>{instrument}</span>
-                                        <button onClick={e => removeInstrument(instrument)}>x</button>
+                                        {isCurrentUser && <button onClick={e => removeInstrument(instrument)}>x</button>}
                                     </li>
                                 ))}
                             </ul>
                         </div>
                         <div className="col-6">
                             {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
-                            <DropdownField 
+                            {!isCurrentUser && <label className="jam-form-label">Favorite Artists:</label>}
+                            {isCurrentUser && <DropdownField 
                                 value={artistQuery}
                                 onInput={setArtistQuery}
                                 label="Favorite Artists:" 
@@ -367,14 +443,14 @@ const UpdateProfile = (props) => {
                                 hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
                                 onMore={moreEntries}
                                 onSelect={onArtistSelect}
-                                entries={artistQueryResults}/>
+                                entries={artistQueryResults}/>}
                             <ul style={instrumentsListStyle}>
                                 {profile.musicInterests.map(artist => (
                                     <li className="removable-list-entry" key={artist.path}>
                                         <div style={artistContainer}>
                                             <img style={artistImageStyle} src={artist.thumb}/>
                                             <div style={artistNameStyle}>{artist.name}</div>
-                                            <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
+                                            {isCurrentUser && <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>}
                                         </div>
                                     </li>
                                 ))}
