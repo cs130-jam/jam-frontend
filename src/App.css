@@ -178,6 +178,7 @@
     background-size: cover;
     position: relative;
   }
+  */
   
   .herotext {
     text-align: center;
@@ -196,6 +197,7 @@
     background-color: white;
     color: black;
     border: 2px solid black;
+    margin: 2px 5px;
 }
 
 .edit-btn1:hover {
@@ -212,4 +214,3 @@
     position: relative;
     margin-top: 5px;
 }
-*/
