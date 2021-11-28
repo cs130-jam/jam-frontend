@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import '../App.css';
 import InputField from '../util/inputField';
+import InputTextarea from '../util/inputTextarea';
 import { useHistory } from "react-router";
 
 const GroupDetails = (props) => 
@@ -66,8 +67,14 @@ const GroupDetails = (props) =>
 
     async function leaveGroup()
     {
-        let response = apiService.leaveGroup(roomId);
+        let response = await apiService.leaveGroup(roomId);
         if(!response.ok) return;
+        history.push("/chatrooms");
+    }
+
+    async function deleteGroup() {
+        let response = await apiService.deleteGroup(roomId);
+        if (!response.ok) return;
         history.push("/chatrooms");
     }
 
@@ -81,7 +88,7 @@ const GroupDetails = (props) =>
     const page = (
         <div className="container-fluid g-0">
             <InputField value={groupName} onInput={setGroupName} label="Group Name:" type="text" id="groupName"/>
-            <InputField value={groupDetails} onInput={setGroupDetails} label="Group Details:" type="text" id="groupDetail"/>
+            <InputTextarea style={{height: "200px"}} value={groupDetails} onInput={setGroupDetails} label="Group Details:" type="text" id="groupDetail"/>
             <center><button className="edit-btn edit-btn1" onClick={updateGroupDetails}>Save</button></center>
         </div>
     );
@@ -99,6 +106,7 @@ const GroupDetails = (props) =>
             <button className="edit-btn edit-btn1" onClick={inviteMember}>Invite Members</button>
             {(groupAdmin != currentUser.id) &&
             <button className="edit-btn edit-btn1" onClick={leaveGroup}>Leave Group</button>}
+            {currentUser.id === groupAdmin && <button className="edit-btn edit-btn1" onClick={deleteGroup}>Delete Group</button>}
             </center>
             <center>
             Group Members:

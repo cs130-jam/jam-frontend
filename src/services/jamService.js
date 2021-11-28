@@ -219,6 +219,13 @@ class JamAPIService {
         });
     }
 
+    deleteGroup(roomId) {
+        return this.apiRequest(API_CALL_URL("chatroom", roomId), {
+            method: "DELETE",
+            headers: {"Accept": "application/json"}
+        });
+    }
+
     inviteMember(roomId, userId) {
         return this.apiRequest(API_CALL_URL("chatroom", roomId, "invite", userId), {
             method: "PUT"
