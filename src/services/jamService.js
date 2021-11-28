@@ -28,7 +28,7 @@ class JamAPIService {
     }
 
     getCurrentUserChatroom(userId){
-        return this.apiRequest(API_CALL_URL("user", userId,"chatroom"), {
+        return this.apiRequest(API_CALL_URL("user", userId, "chatroom"), {
             headers: {
                 "Accept": "application/json"
             }
@@ -98,6 +98,16 @@ class JamAPIService {
 
     updateProfile(data) {
         return this.apiRequest(API_CALL_URL("user", "profile"), {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
+    updatePreferences(data) {
+        return this.apiRequest(API_CALL_URL("user", "preferences"), {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -213,8 +223,6 @@ class JamAPIService {
         });
     }
 
-    
-
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
             method: "GET",
@@ -222,9 +230,7 @@ class JamAPIService {
                 "Accept": "application/json"
             },
         });
-    }
-
-    
+    }    
 
     apiRequest(url, info) {
         const headersWithToken = "headers" in info ? info.headers : {};

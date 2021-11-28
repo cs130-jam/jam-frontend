@@ -20,16 +20,21 @@ const roomsSectionStyle = {
     paddingLeft: "12px",
     marginLeft: "8px",
     minWidth: "240px",
-    height: "100%",
+    height: "calc(100vh - 107px - 118px)", // should be the same as in App.js
     backgroundColor: "#f2f7fc"
 };
+
+const chatSectionStyle = {
+    height: "calc(100vh - 107px - 118px)", // should be the same as in App.js
+}
 
 const chatroomInfoStyle = {
     backgroundColor: "#f2f7fc",
     minWidth: "240px",
     height: "100%",
     borderLeft: "1px solid rgba(0, 0, 0, 0.07)",
-    padding: "15px"
+    padding: "15px",
+    height: "calc(100vh - 107px - 118px)", // should be the same as in App.js
 }
 
 const roomsListStyle = {
@@ -99,14 +104,14 @@ const Chatrooms = (props) => {
 
     async function fetchChatroomIds() {
         if (currentUser.id === undefined) return;
-        
+
         let response = await apiService.getChatroomIds();
         if (!response.ok) return;
         let ids = await response.json();
         setChatroomIds(ids);
         ids.slice(0, loadedCount).forEach(load);
     }
-
+    
     async function load(roomId) {
         let response = await apiService.getChatroom(roomId);
         if (!response.ok) return;
@@ -199,7 +204,7 @@ const Chatrooms = (props) => {
                 <li ref={loadMoreRef} key="LOAD MORE"></li>
             </ul>
         </div>
-        <div className="col">
+        <div className="col" style={chatSectionStyle}>
             {selectedChatroom.length > 0 && <Chats
                 roomId={selectedChatroom}
                 chatsMap={chatsMap}
@@ -218,13 +223,13 @@ const Chatrooms = (props) => {
                 </h2>
                 <div>
                     {!chatroomMap[selectedChatroom].directMessage &&
-                        <Link to="/group-details" style={infoIconStyle}>
+                        <Link to={`/chatrooms/${selectedChatroom}/details`} style={infoIconStyle}>
                             <FaIcons.FaInfoCircle/>
                         </Link>
                     }
                     <h4>Members:</h4>
                     {[currentUser, ...chatroomMap[selectedChatroom].otherMembers].map(user => 
-                        <Link key={user.id} to="/user-profile" className="chatroom-member-entry">
+                        <Link key={user.id} to={`/user/${user.id}`} className="chatroom-member-entry">
                             {user.profile.firstName + " " + user.profile.lastName}
                         </Link>
                     )}

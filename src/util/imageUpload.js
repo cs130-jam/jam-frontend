@@ -1,7 +1,15 @@
-
 import { useEffect, useRef, useState } from 'react';
 
 const MAX_FILE_SIZE_BYTES = 5000000; // 5 mb
+
+const filePickerStyle = {
+    width: "100%",
+    marginTop: "8px"
+};
+
+const subButtonStyle = {
+    marginTop: "4px"
+}
 
 const FileUpload = (props) => {
     const postUpload = props.postUpload;
@@ -12,7 +20,7 @@ const FileUpload = (props) => {
     async function getAccepted() {
         let acceptedResponse = await fetchAccepted();
         let acceptedJson = await acceptedResponse.json();
-        setAccepted(acceptedJson.join(", "));
+        setAccepted(acceptedJson.map(ext => "." + ext).join(", "));
     }
 
     async function uploadFile() {
@@ -37,8 +45,8 @@ const FileUpload = (props) => {
     return (accepted.length === 0 
         ? <p>Loading...</p>
         : <div>
-            <input type="file" accept={accepted} ref={uploadInput}/>
-            <button onClick={uploadFile}>Upload</button>
+            <input style={filePickerStyle} type="file" accept={accepted} ref={uploadInput}/>
+            <button style={subButtonStyle} onClick={uploadFile} className="jam-submit-button">Upload</button>
         </div>
     );
 }

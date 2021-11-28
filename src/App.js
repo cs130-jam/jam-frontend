@@ -22,7 +22,7 @@ import CreateChatroom from './components/createChatroom';
 const SESSION_TOKEN_KEY = "session-token";
 
 const contentStyle = {
-    height: "calc(100vh - 107px - 118px)", // values determined from header and footer height
+    minHeight: "calc(100vh - 107px - 118px)", // values determined from header and footer height
     position: "relative"
 };
 
@@ -36,7 +36,7 @@ const notFoundStyle = {
 function App() {
     const history = useHistory();
     const [sessionToken, setSessionToken, removeSessionToken] = useCookie(SESSION_TOKEN_KEY);
-    const [currentUser, setCurrentUser] = useState({});
+    const [currentUser, setCurrentUser] = useState({"id": ""});
     const apiService = new JamAPIService(sessionToken, removeSessionToken, history);
 
     useEffect(() => getCurrentUserId(), [sessionToken]);
@@ -66,7 +66,7 @@ function App() {
                             <Logout removeSessionToken={removeSessionToken}/>
                         </Route>
                         <Route exact path="/about-us">
-                            <AboutUs />
+                            <AboutUs/>
                         </Route>
                         <Route exact path="/privacy-policy">
                             <PrivacyPolicy/>
@@ -79,9 +79,10 @@ function App() {
                                 postUpload={apiService.uploadPfp.bind(apiService)}
                                 getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>
                         </Route>
-                        <Route exact path="/update-profile">
-                            <UpdateProfile apiService = {apiService}/>
-                        </Route>
+                        <Route 
+                            exact path={["/user", "/user/:userId"]}
+                            render={(props) => <UpdateProfile {...props} apiService={apiService} currentUser={currentUser}/>}
+                        />
                         <Route exact path="/find-friend">
                             <FindFriend apiService = {apiService}/>
                         </Route>

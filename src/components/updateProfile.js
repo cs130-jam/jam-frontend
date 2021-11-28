@@ -5,10 +5,12 @@ import '../App.css';
 import DropdownField from '../util/dropdownField';
 import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
-import useStateRef from '../util/useStateRef';
-import { useHistory } from "react-router-dom";
+import InputTextarea from '../util/inputTextarea';
+import FileUpload from '../util/imageUpload';
 
-  const instrumentsListStyle = {
+const FALLBACK_IMG = "https://i.pinimg.com/originals/0c/3b/3a/0c3b3adb1a7530892e55ef36d3be6cb8.png";
+
+const instrumentsListStyle = {
     margin: "0px",
     padding: "0px",
     listStyleType: "none"
@@ -41,51 +43,58 @@ const alertStyle = {
     top: '0'
 };
 
-const formStyle = {
+const jamForm = {
+    width: "800px"
+};
 
-        padding: "100px 30px 30px 30px",
-        border: "0px",
-        background: "#fff"
-  
+const pfpWidthStyle = {
+    width: "250px"
+};
+
+const pfpHeightStyle = {
+    height: "250px"
+};
+
+const cropStyle = {
+    width: "250px",
+    height: "250px",
+    overflow: "hidden",
+    margin: "0 auto",
+    borderRadius: "10px"
+};
+
+const centeredStyle = {
+    width: "250px",
+    margin: "4px auto"
 };
 
 const ARTIST_SEARCH_DELAY = 1000; // every second
 const MIN_ARTIST_SEARCH_LEN = 2;
 
 const UpdateProfile = (props) => {
+    const apiService = props.apiService;
+    const currentUser = props.currentUser;
+    const pathUserId = props.match.params.userId ? props.match.params.userId : props.currentUser.id;
+    const isCurrentUser = currentUser.id === pathUserId;
 
-    const apiService = props.apiService
-    const [pageIndex, setPageIndex] = useState(0);
-    const history = useHistory();
-    
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [loaded, setLoaded] = useState(false);
+    const [profile, setProfile] = useState({});
+    const [preferences, setPreferences] = useState({})
 
     const [instruments, setInstruments] = useState([]);
     const [filteredInstruments, setFilteredInstruments] = useState([]);
-    const [knownInstruments, setKnownInstruments] = useState([]);
+    const [filteredWantedInstruments, setFilteredWantedInstruments] = useState([]);
     const [instQuery, setInstQuery] = useState("");
+    const [wantedInstQuery, setWantedInstQuery] = useState("");
 
     const [cachedSearches, setCachedSearches] = useState({});
     const [artistQueryResults, setArtistQueryResults] = useState([]);
     const [artistQuery, setArtistQuery] = useState("");
-    const [artists, setArtists, artistsRef] = useStateRef([]);
-    let arts = [];
-    const [isValidInterests, setIsValidInterests] = useState(true); 
-    const [failMessage, setFailMessage] = useState("");
+    const [isValidInterests, setIsValidInterests] = useState(true);
 
-
-    function namesDone() {
-        if (firstName.length === 0) {
-            return;
-        }
-
-        setPageIndex(pageIndex + 1);
-    }
-
-    function prevPage() {
-        setPageIndex(pageIndex - 1);
-    }
+    const [pfpTimestamp, setPfpTimestamp] = useState(Date.now());
+    const [pfpStyle, _setPfpStyle] = useState(pfpHeightStyle);
+    const pfpRef = useRef();
 
     function matchingPrefixIgnoreCase(prefix, entries) {
         prefix = prefix.toLowerCase();
@@ -93,6 +102,22 @@ const UpdateProfile = (props) => {
             const compareLength = Math.min(prefix.length, entry.length);
             return prefix.substring(0, compareLength) === entry.substring(0, compareLength).toLowerCase();
         });
+    }
+    
+    function setFirstName(name) {
+        setProfile({...profile, firstName: name});
+    }
+
+    function setLastName(name) {
+        setProfile({...profile, lastName: name});
+    }
+
+    function setMaxDistance(dst) {
+        setPreferences({...preferences, maxDistance: {units: "Miles", value: dst}});
+    }
+
+    function setBio(_bio) {
+        setProfile({...profile, bio: _bio});
     }
 
     function getFilteredInstruments(query) {
@@ -102,9 +127,21 @@ const UpdateProfile = (props) => {
         setFilteredInstruments(getFilteredInstruments(instQuery));
     }, [instQuery, instruments]);
 
+    function getFilteredWantedInstruments(query) {
+        return matchingPrefixIgnoreCase(query, instruments);
+    }
+    useEffect(() => {
+        setFilteredWantedInstruments(getFilteredWantedInstruments(wantedInstQuery));
+    }, [wantedInstQuery, instruments]);
+
     function onInstrumentSelect(instrument) {
-        if (knownInstruments.includes(instrument.name)) return;
-        setKnownInstruments([...knownInstruments, instrument.name]);
+        if (profile.instruments.includes(instrument.name)) return;
+        setProfile({...profile, instruments: [...profile.instruments, instrument.name]});
+    }
+
+    function onWantedInstrumentSelect(instrument) {
+        if (preferences.wantedInstruments.includes(instrument.name)) return;
+        setPreferences({...preferences, wantedInstruments: [...preferences.wantedInstruments, instrument.name]});
     }
 
     async function getInstruments() {
@@ -115,11 +152,11 @@ const UpdateProfile = (props) => {
     useEffect(() => getInstruments(), []);
 
     function removeInstrument(instrument) {
-        setKnownInstruments(knownInstruments.filter(filteredInstrument => filteredInstrument !== instrument));
+        setProfile({...profile, instruments: profile.instruments.filter(filteredInstrument => filteredInstrument !== instrument)});
     }
 
-    function instrumentsDone() {
-        setPageIndex(pageIndex + 1);
+    function removeWantedInstrument(instrument) {
+        setPreferences({...preferences, wantedInstruments: preferences.wantedInstruments.filter(wantedInstruments => wantedInstruments !== instrument)});
     }
 
     useInterval(() => {
@@ -141,10 +178,8 @@ const UpdateProfile = (props) => {
         if (cached && cached.page === cached.totalPages) return;
 
         let page = cached ? cached.page + 1 : 1;
-        console.log(query);
         let response = await apiService.findArtists(query, page);
         let json = await response.json();
-        console.log(json);
         if (!cached) {
             cachedSearches[query] = {
                 "page": page,
@@ -166,15 +201,9 @@ const UpdateProfile = (props) => {
         }
     }
 
-    function onArtistSelect(entry, id) {
-        if (artistsRef.current.length >= 2) setIsValidInterests(true);
-        console.log(entry);
-        console.log(id);
-        if(id===1)
-            setArtists([...artistsRef.current, entry]);
-        else
-            setArtists([...artistsRef.current, entry.content]);
-        //console.log(artists);
+    function onArtistSelect(entry) {
+        if (profile.musicInterests.length >= 2) setIsValidInterests(true);
+        setProfile({...profile, musicInterests: [...profile.musicInterests, entry.content]});
     }
 
 
@@ -196,8 +225,6 @@ const UpdateProfile = (props) => {
                 "content": response
             };
         }));
-
-        console.log(artistQueryResults);
     }, [artistQuery, cachedSearches]);
 
     function moreEntries() {
@@ -208,182 +235,193 @@ const UpdateProfile = (props) => {
     }
 
     function removeArtist(removeEntry) {
-        setArtists(artistsRef.current.filter(artist => artist.path !== removeEntry.path));
+        setProfile({...profile, musicInterests: profile.musicInterests.filter(artist => artist.path !== removeEntry.path)});
     }
 
-    async function loadUser(){
-        let response = await apiService.getCurrentUser();
-        
-        if (!response.ok) {
-          return;
+    function maxDistanceError() {
+        return !/^[-\d]+$/.test(preferences.maxDistance.value) || parseInt(preferences.maxDistance.value) <= 0;
+    }
+
+    function maxDistanceErrorMessage() {
+        if (!(/^[-\d]+$/.test(preferences.maxDistance.value))) {
+            return "Must be a number";
+        } else if (parseInt(preferences.maxDistance.value) <= 0) {
+            return "Must be greater than 0";
         }
+    }
+
+    async function loadUser() {
+        if (!currentUser.id) return;
+        let response = await (isCurrentUser ? apiService.getCurrentUser() : apiService.getUser(pathUserId));
+        
+        if (!response.ok) return;
         let json = await response.json();
-        console.log(json);
-        console.log(json.profile.musicInterests);
-        setFirstName(json.profile.firstName);
-        setLastName(json.profile.lastName);
-        setKnownInstruments(json.profile.instruments);
-        
-        //setLoaded(true);
-        
-        for(let i=0; i<json.profile.musicInterests.length; i++)
-        {
-            console.log(json.profile.musicInterests[i].name);
-            let flag = true;
-            let page = 1;
-            while(flag)
-            {
 
-                let response1 = await apiService.findArtists(json.profile.musicInterests[i].name, page);
-                let json1 = await response1.json();
-                let var1 = json1.responses.filter(artist => artist.path === json.profile.musicInterests[i].path);
-                
-                page++;
-                if(var1.length!==0)
-                   { 
-                    console.log(var1[0]);
-                    onArtistSelect(var1[0], 1);
-                    arts.push( var1[0]);
-                    flag=false;
-                   }
-            }
+        setProfile(json.profile);
+        if (isCurrentUser) {
+            setPreferences(json.preferences);
         }
-        
+        setLoaded(true);
     }
-
-    useEffect(() => loadUser(), []);
+    useEffect(() => loadUser(), [currentUser]);
 
     async function updateProfile() {
-        console.log("gggggg");
-        if (artists.length < 3) {
+        if (!isCurrentUser) return;
+        if (profile.musicInterests.length < 3) {
             setIsValidInterests(false);
             return;
         }
-        console.log(artists);
-        let locationPromise = new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(pos => resolve(pos), error => reject(error));
-        });
-        let location = await locationPromise;
-        let response = await apiService.updateProfile({
-            "firstName": firstName,
-            "lastName": lastName,
-            "location": {
-                "longitude": location.coords.longitude.toString(),
-                "latitude": location.coords.latitude.toString()
-            },
-            "musicInterests": artists.map(artist => {
-                return {"name": artist.name, "path": artist.path}
-            }),
-            "instruments": knownInstruments
-        });
-        if (response.ok){
-            history.push("/home");
-        } 
-        console.log(response);
+        if (maxDistanceError()) return;
 
+        let profileCopy = {...profile};
+        delete profileCopy["pfpUrl"];
+        let response = await apiService.updateProfile(profileCopy);
+        if (!response.ok) return;
+
+        preferences.maxDistance.value = parseInt(preferences.maxDistance.value); 
+        response = await apiService.updatePreferences(preferences);
+        if (!response.ok) return;
     }
 
-    const pages = [
-        (
-            <div className="container-fluid g-0">
-            <p className="jam-title-text">Personal Information</p>
-            <ErrorInputField 
-                value={firstName}
-                onInput={setFirstName}
-                label="First Name: " 
-                type="text" 
-                isError={firstName.length === 0}
-                message="First name is required"/>
-            <InputField value={lastName} onInput={setLastName} label="Last Name:" type="text" />
-            <div className="row g-0">
-                <div className="col-4">
-                    {/* <button className="jam-submit-button disabled" disabled>Back</button> */}
-                </div>
-                <div className="col-4"></div>
-                <div className="col-4">
-                    <button className="jam-submit-button" onClick={namesDone}>Next</button>
-                </div>  
-            </div>
-        </div>
-        ),
-        (
-            <div className="container-fluid g-0">
-            <p className="jam-title-text">Favourite Instruments</p>
-            <DropdownField 
-                value={instQuery}
-                onInput={setInstQuery}
-                label="Add Known Instruments:" 
-                type="text"
-                hasMore={false}
-                onSelect={onInstrumentSelect}
-                entries = {filteredInstruments.map(inst => {return {
-                    name: inst, 
-                    html: (<span>{inst}</span>)
-                }})}/>
-            <ul style={instrumentsListStyle}>
-                {knownInstruments.map(instrument => (
-                    <li className="removable-list-entry" key={instrument}>
-                        <span>{instrument}</span>
-                        <button onClick={e => removeInstrument(instrument)}>x</button>
-                    </li>
-                ))}
-            </ul>
-            <div className="row g-0">
-                <div className="col-4">
-                    <button className="jam-submit-button" onClick={prevPage}>Back</button>
-                </div>
-                <div className="col-4"></div>
-                <div className="col-4">
-                    <button className="jam-submit-button" onClick={instrumentsDone}>Next</button>
-                </div>  
-            </div>
-        </div>
-        ),
-        (          <div className="container-fluid g-0">
-        {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
-        {failMessage.length > 0 && <Alert style={alertStyle} variant="danger">{failMessage}</Alert>}
-        <p className="jam-title-text">Favourite Artists</p>
-        <DropdownField 
-            value={artistQuery}
-            onInput={setArtistQuery}
-            label="Add Favorite Artists:" 
-            type="text"
-            hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
-            onMore={moreEntries}
-            onSelect={onArtistSelect}
-            entries={artistQueryResults}/>
-        <ul style={instrumentsListStyle}>
-            {artists.map(artist => (
-                <li className="removable-list-entry" key={artist.path}>
-                    <div style={artistContainer}>
-                        <img style={artistImageStyle} src={artist.thumb}/>
-                        <div style={artistNameStyle}>{artist.name}</div>
-                        <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
+    async function uploadPfp(pfpForm) {
+        let response = await apiService.uploadPfp(pfpForm);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        await loadUser();
+        setPfpTimestamp(Date.now());
+        return response;
+    }
+
+    function setPfpStyle() {
+        if (pfpRef.current.width > pfpRef.current.height) {
+            _setPfpStyle(pfpHeightStyle);
+        } else {
+            _setPfpStyle(pfpWidthStyle);
+        }
+    }
+
+    return (loaded &&
+        <div className="d-flex justify-content-center align-items-center">
+            <div className="jam-form" style={jamForm}>
+                <div className="container-fluid g-0">
+                    <p className="jam-title-text">User Profile</p>
+                    <div style={centeredStyle}>
+                        <div style={cropStyle}>
+                            <img 
+                                ref={pfpRef}
+                                style={pfpStyle}
+                                key={pfpTimestamp}
+                                src={"http://localhost" + profile.pfpUrl}
+                                onLoad={setPfpStyle}
+                                onError={(e)=>{e.target.onerror = null; e.target.src=FALLBACK_IMG}}
+                                />
+                        </div>
+                        {isCurrentUser && <FileUpload 
+                            postUpload={uploadPfp}
+                            getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>}
                     </div>
-                </li>
-            ))}
-        </ul>
-        <div className="row g-0">
-            <div className="col-4">
-                <button className="jam-submit-button" onClick={prevPage}>Back</button>
+                    
+                    <div className="row">
+                        <div className="col-6">
+                            <ErrorInputField
+                                value={profile.firstName}
+                                onInput={setFirstName}
+                                label="First Name: " 
+                                type="text"
+                                isError={profile.firstName.length === 0}
+                                message="First name is required"/>
+                            <InputField value={profile.lastName} onInput={setLastName} label="Last Name:" type="text"/>
+                        </div>
+                        <div className="col-6">
+                            <InputTextarea value={profile.bio} onInput={setBio} label="Biography:" type="text"/>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-6">
+                            <DropdownField 
+                                value={instQuery}
+                                onInput={setInstQuery}
+                                label="Known Instruments:" 
+                                type="text"
+                                hasMore={false}
+                                onSelect={onInstrumentSelect}
+                                entries = {filteredInstruments.map(inst => {return {
+                                    name: inst, 
+                                    html: (<span>{inst}</span>)
+                                }})}/>
+                            <ul style={instrumentsListStyle}>
+                                {profile.instruments.map(instrument => (
+                                    <li className="removable-list-entry" key={instrument}>
+                                        <span>{instrument}</span>
+                                        <button onClick={e => removeInstrument(instrument)}>x</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="col-6">
+                            {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
+                            <DropdownField 
+                                value={artistQuery}
+                                onInput={setArtistQuery}
+                                label="Favorite Artists:" 
+                                type="text"
+                                hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
+                                onMore={moreEntries}
+                                onSelect={onArtistSelect}
+                                entries={artistQueryResults}/>
+                            <ul style={instrumentsListStyle}>
+                                {profile.musicInterests.map(artist => (
+                                    <li className="removable-list-entry" key={artist.path}>
+                                        <div style={artistContainer}>
+                                            <img style={artistImageStyle} src={artist.thumb}/>
+                                            <div style={artistNameStyle}>{artist.name}</div>
+                                            <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                    {isCurrentUser && <div className="row">
+                        <div className="col-6">
+                            <ErrorInputField 
+                                value={preferences.maxDistance.value}
+                                onInput={setMaxDistance}
+                                label="Max Match Distance (Miles): " 
+                                type="text" 
+                                isError={maxDistanceError()}
+                                message={maxDistanceErrorMessage()}/>
+                        </div>
+                        <div className="col-6">
+                            <DropdownField 
+                                value={wantedInstQuery}
+                                onInput={setWantedInstQuery}
+                                label="Wanted Instruments (Empty for any):" 
+                                type="text"
+                                hasMore={false}
+                                onSelect={onWantedInstrumentSelect}
+                                entries = {filteredWantedInstruments.map(inst => {return {
+                                    name: inst, 
+                                    html: (<span>{inst}</span>)
+                                }})}/>
+                            <ul style={instrumentsListStyle}>
+                                {preferences.wantedInstruments.map(instrument => (
+                                    <li className="removable-list-entry" key={instrument}>
+                                        <span>{instrument}</span>
+                                        <button onClick={e => removeWantedInstrument(instrument)}>x</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>}
+                    {isCurrentUser && <>
+                        <br/>
+                        <div className="row g-0">
+                            <button className="jam-submit-button" onClick={updateProfile}>Apply Changes</button>
+                        </div>
+                    </>}
+                </div>
             </div>
-            <div className="col-4"></div>
-            <div className="col-4">
-                <button className="jam-submit-button" onClick={updateProfile}>Apply Changes</button>
-            </div>  
         </div>
-    </div> )
-    ];
-
-    return (
-
-          <div className="d-flex justify-content-center align-items-center">
-          <div className="jam-form" style={formStyle}>
-
-          {pages[pageIndex]}
-            </div>
-            </div>
-  
     );
 };
 
