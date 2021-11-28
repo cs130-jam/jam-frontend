@@ -2,7 +2,13 @@ import React, {useState, useRef, useEffect} from 'react';
 import '../App.css';
 import InputField from '../util/inputField';
 import InputTextarea from '../util/inputTextarea';
+import DropdownField from '../util/dropdownField';
 import { useHistory } from "react-router";
+
+function matchingPrefixIgnoreCase(prefix, entry) {
+    const compareLength = Math.min(prefix.length, entry.length);
+    return prefix.substring(0, compareLength).toLowerCase() === entry.substring(0, compareLength).toLowerCase();
+}
 
 const GroupDetails = (props) => 
 {
@@ -17,11 +23,8 @@ const GroupDetails = (props) =>
     const [groupAdmin, setGroupAdmin] = useState("");
     const history = useHistory();
 
-    const membersListStyle = {
-        margin: "0px",
-        padding: "0px",
-        listStyleType: "none"
-    }
+    const [friends, setFriends] = useState([]);
+    const [friendSearch, setFriendSearch] = useState("");
 
     async function fetchChatRoomDetails()
     {
@@ -38,6 +41,14 @@ const GroupDetails = (props) =>
         let memberResponse = await Promise.all(json.members.map(id => apiService.getUser(id)));
         let members = await Promise.all(memberResponse.map(resp => resp.json()));
         setGroupMembers(members);
+
+        response = await apiService.getFriendIds();
+        if (!response.ok) return;
+        let friendIds = await response.json();
+
+        let friendsResponses = await Promise.all(friendIds.map(id => apiService.getUser(id)));
+        let friends = await Promise.all(friendsResponses.map(resp => resp.json()));
+        setFriends(friends);
     }
 
     useEffect(() => fetchChatRoomDetails(), []);
@@ -84,6 +95,17 @@ const GroupDetails = (props) =>
         fetchChatRoomDetails();
     }
 
+    function getFilteredFriends(searchStr) {
+        return friends.filter(friend => 
+            matchingPrefixIgnoreCase(searchStr, friend.profile.firstName + " " + friend.profile.lastName));
+    }
+
+    function onFriendSelect(entry) {
+        const friend = entry.friend;
+        if (groupMembers.map(member => member.id).includes(friend.id)) return;
+        apiService.inviteMember(roomId, friend.id);
+    }
+
     //Display the page/extra things to view on page
     const page = (
         <div className="container-fluid g-0">
@@ -103,23 +125,32 @@ const GroupDetails = (props) =>
         
         <div>
             <center>
-            <button className="edit-btn edit-btn1" onClick={inviteMember}>Invite Members</button>
-            {(groupAdmin != currentUser.id) &&
-            <button className="edit-btn edit-btn1" onClick={leaveGroup}>Leave Group</button>}
-            {currentUser.id === groupAdmin && <button className="edit-btn edit-btn1" onClick={deleteGroup}>Delete Group</button>}
+                <DropdownField 
+                    value={friendSearch}
+                    onInput={setFriendSearch}
+                    label="Invite Friends:" 
+                    type="text"
+                    hasMore={false}
+                    onSelect={onFriendSelect}
+                    entries = {getFilteredFriends(friendSearch).map(friend => {return {
+                        friend: friend, 
+                        html: (<span>{friend.profile.firstName + " " + friend.profile.lastName}</span>)
+                    }})}/>
+                {(groupAdmin != currentUser.id) && <button className="edit-btn edit-btn1" onClick={leaveGroup}>Leave Group</button>}
+                {currentUser.id === groupAdmin && <button className="edit-btn edit-btn1" onClick={deleteGroup}>Delete Group</button>}
             </center>
             <center>
-            Group Members:
-            <ul>
-                {groupMembers.map(groupMember => (
-                    <li className="member-entry" key={groupMember.id}>
-                        <span>{groupMember.profile.firstName + " " + groupMember.profile.lastName}</span>
-                        <button className="edit-btn edit-btn1" onClick={() => viewProfile(groupMember.id)}>View Profile</button>
-                        {(groupAdmin === currentUser.id) && (groupMember.id != groupAdmin) && 
-                            <button className="edit-btn edit-btn1" onClick={() => removeMember(groupMember.id)}>Remove Member</button>}
-                    </li>
-                        ))}
-            </ul>
+                Group Members:
+                <ul>
+                    {groupMembers.map(groupMember => (
+                        <li className="member-entry" key={groupMember.id}>
+                            <span>{groupMember.profile.firstName + " " + groupMember.profile.lastName}</span>
+                            <button className="edit-btn edit-btn1" onClick={() => viewProfile(groupMember.id)}>View Profile</button>
+                            {(groupAdmin === currentUser.id) && (groupMember.id != groupAdmin) && 
+                                <button className="edit-btn edit-btn1" onClick={() => removeMember(groupMember.id)}>Remove Member</button>}
+                        </li>
+                            ))}
+                </ul>
             </center>
         </div>
         </div>
