@@ -66,15 +66,6 @@ function AppContent() {
                         <Route exact path="/logout">
                             <Logout removeSessionToken={removeSessionToken}/>
                         </Route>
-                        <Route exact path="/about-us">
-                            <AboutUs/>
-                        </Route>
-                        <Route exact path="/privacy-policy">
-                            <PrivacyPolicy/>
-                        </Route>
-                        <Route exact path="/contact-us">
-                            <ContactUs/>
-                        </Route>
                         <Route exact path="/test-upload">
                             <FileUpload 
                                 postUpload={apiService.uploadPfp.bind(apiService)}
@@ -110,6 +101,15 @@ function AppContent() {
                         </Route>
                         <Route exact path="/sign-up">
                             <SignUp setSessionToken={setSessionToken} apiService={apiService}/>
+                        </Route>
+                        <Route exact path="/about-us">
+                            <AboutUs/>
+                        </Route>
+                        <Route exact path="/privacy-policy">
+                            <PrivacyPolicy/>
+                        </Route>
+                        <Route exact path="/contact-us">
+                            <ContactUs/>
                         </Route>
                         <Route>
                             <h1 style={notFoundStyle}>Page not found</h1>
