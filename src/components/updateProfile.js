@@ -5,8 +5,10 @@ import '../App.css';
 import DropdownField from '../util/dropdownField';
 import useInterval from '../util/useInterval';
 import { Alert } from 'react-bootstrap';
-import useStateRef from '../util/useStateRef';
-import { useHistory } from "react-router-dom";
+import InputTextarea from '../util/inputTextarea';
+import FileUpload from '../util/imageUpload';
+
+const FALLBACK_IMG = "https://i.pinimg.com/originals/0c/3b/3a/0c3b3adb1a7530892e55ef36d3be6cb8.png";
 
 const instrumentsListStyle = {
     margin: "0px",
@@ -41,6 +43,31 @@ const alertStyle = {
     top: '0'
 };
 
+const jamForm = {
+    width: "800px"
+};
+
+const pfpWidthStyle = {
+    width: "250px"
+};
+
+const pfpHeightStyle = {
+    height: "250px"
+};
+
+const cropStyle = {
+    width: "250px",
+    height: "250px",
+    overflow: "hidden",
+    margin: "0 auto",
+    borderRadius: "10px"
+};
+
+const centeredStyle = {
+    width: "250px",
+    margin: "4px auto"
+};
+
 const ARTIST_SEARCH_DELAY = 1000; // every second
 const MIN_ARTIST_SEARCH_LEN = 2;
 
@@ -49,7 +76,6 @@ const UpdateProfile = (props) => {
     const currentUser = props.currentUser;
     const pathUserId = props.match.params.userId ? props.match.params.userId : props.currentUser.id;
     const isCurrentUser = currentUser.id === pathUserId;
-    const history = useHistory();
 
     const [loaded, setLoaded] = useState(false);
     const [profile, setProfile] = useState({});
@@ -65,6 +91,10 @@ const UpdateProfile = (props) => {
     const [artistQueryResults, setArtistQueryResults] = useState([]);
     const [artistQuery, setArtistQuery] = useState("");
     const [isValidInterests, setIsValidInterests] = useState(true);
+
+    const [pfpTimestamp, setPfpTimestamp] = useState(Date.now());
+    const [pfpStyle, _setPfpStyle] = useState(pfpHeightStyle);
+    const pfpRef = useRef();
 
     function matchingPrefixIgnoreCase(prefix, entries) {
         prefix = prefix.toLowerCase();
@@ -84,6 +114,10 @@ const UpdateProfile = (props) => {
 
     function setMaxDistance(dst) {
         setPreferences({...preferences, maxDistance: {units: "Miles", value: dst}});
+    }
+
+    function setBio(_bio) {
+        setProfile({...profile, bio: _bio});
     }
 
     function getFilteredInstruments(query) {
@@ -239,8 +273,9 @@ const UpdateProfile = (props) => {
         }
         if (maxDistanceError()) return;
 
-        delete profile["pfpUrl"];
-        let response = await apiService.updateProfile(profile);
+        let profileCopy = {...profile};
+        delete profileCopy["pfpUrl"];
+        let response = await apiService.updateProfile(profileCopy);
         if (!response.ok) return;
 
         preferences.maxDistance.value = parseInt(preferences.maxDistance.value); 
@@ -248,90 +283,136 @@ const UpdateProfile = (props) => {
         if (!response.ok) return;
     }
 
+    async function uploadPfp(pfpForm) {
+        let response = await apiService.uploadPfp(pfpForm);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        await loadUser();
+        setPfpTimestamp(Date.now());
+        return response;
+    }
+
+    function setPfpStyle() {
+        if (pfpRef.current.width > pfpRef.current.height) {
+            _setPfpStyle(pfpHeightStyle);
+        } else {
+            _setPfpStyle(pfpWidthStyle);
+        }
+    }
+
     return (loaded &&
         <div className="d-flex justify-content-center align-items-center">
-            <div className="jam-form">
+            <div className="jam-form" style={jamForm}>
                 <div className="container-fluid g-0">
-                    <p className="jam-title-text">{profile.firstName + " " + profile.lastName}</p>
-                    <ErrorInputField 
-                        value={profile.firstName}
-                        onInput={setFirstName}
-                        label="First Name: " 
-                        type="text" 
-                        isError={profile.firstName.length === 0}
-                        message="First name is required"/>
-                    <InputField value={profile.lastName} onInput={setLastName} label="Last Name:" type="text" />
-                    <br/>
-                    <DropdownField 
-                        value={instQuery}
-                        onInput={setInstQuery}
-                        label="Known Instruments:" 
-                        type="text"
-                        hasMore={false}
-                        onSelect={onInstrumentSelect}
-                        entries = {filteredInstruments.map(inst => {return {
-                            name: inst, 
-                            html: (<span>{inst}</span>)
-                        }})}/>
-                    <ul style={instrumentsListStyle}>
-                        {profile.instruments.map(instrument => (
-                            <li className="removable-list-entry" key={instrument}>
-                                <span>{instrument}</span>
-                                <button onClick={e => removeInstrument(instrument)}>x</button>
-                            </li>
-                        ))}
-                    </ul>
-                    <br/>   
-                    {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
-                    <DropdownField 
-                        value={artistQuery}
-                        onInput={setArtistQuery}
-                        label="Favorite Artists:" 
-                        type="text"
-                        hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
-                        onMore={moreEntries}
-                        onSelect={onArtistSelect}
-                        entries={artistQueryResults}/>
-                    <ul style={instrumentsListStyle}>
-                        {profile.musicInterests.map(artist => (
-                            <li className="removable-list-entry" key={artist.path}>
-                                <div style={artistContainer}>
-                                    <img style={artistImageStyle} src={artist.thumb}/>
-                                    <div style={artistNameStyle}>{artist.name}</div>
-                                    <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    {isCurrentUser && <>
-                        <br/>
-                        <ErrorInputField 
-                            value={preferences.maxDistance.value}
-                            onInput={setMaxDistance}
-                            label="Max Match Distance (Miles): " 
-                            type="text" 
-                            isError={maxDistanceError()}
-                            message={maxDistanceErrorMessage()}/>
-                        <DropdownField 
-                            value={wantedInstQuery}
-                            onInput={setWantedInstQuery}
-                            label="Wanted Instruments (Empty for any):" 
-                            type="text"
-                            hasMore={false}
-                            onSelect={onWantedInstrumentSelect}
-                            entries = {filteredWantedInstruments.map(inst => {return {
-                                name: inst, 
-                                html: (<span>{inst}</span>)
-                            }})}/>
-                        <ul style={instrumentsListStyle}>
-                            {preferences.wantedInstruments.map(instrument => (
-                                <li className="removable-list-entry" key={instrument}>
-                                    <span>{instrument}</span>
-                                    <button onClick={e => removeWantedInstrument(instrument)}>x</button>
-                                </li>
-                            ))}
-                        </ul>
-                    </>}
+                    <p className="jam-title-text">User Profile</p>
+                    <div style={centeredStyle}>
+                        <div style={cropStyle}>
+                            <img 
+                                ref={pfpRef}
+                                style={pfpStyle}
+                                key={pfpTimestamp}
+                                src={"http://localhost" + profile.pfpUrl}
+                                onLoad={setPfpStyle}
+                                onError={(e)=>{e.target.onerror = null; e.target.src=FALLBACK_IMG}}
+                                />
+                        </div>
+                        {isCurrentUser && <FileUpload 
+                            postUpload={uploadPfp}
+                            getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>}
+                    </div>
+                    
+                    <div className="row">
+                        <div className="col-6">
+                            <ErrorInputField
+                                value={profile.firstName}
+                                onInput={setFirstName}
+                                label="First Name: " 
+                                type="text"
+                                isError={profile.firstName.length === 0}
+                                message="First name is required"/>
+                            <InputField value={profile.lastName} onInput={setLastName} label="Last Name:" type="text"/>
+                        </div>
+                        <div className="col-6">
+                            <InputTextarea value={profile.bio} onInput={setBio} label="Biography:" type="text"/>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-6">
+                            <DropdownField 
+                                value={instQuery}
+                                onInput={setInstQuery}
+                                label="Known Instruments:" 
+                                type="text"
+                                hasMore={false}
+                                onSelect={onInstrumentSelect}
+                                entries = {filteredInstruments.map(inst => {return {
+                                    name: inst, 
+                                    html: (<span>{inst}</span>)
+                                }})}/>
+                            <ul style={instrumentsListStyle}>
+                                {profile.instruments.map(instrument => (
+                                    <li className="removable-list-entry" key={instrument}>
+                                        <span>{instrument}</span>
+                                        <button onClick={e => removeInstrument(instrument)}>x</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="col-6">
+                            {!isValidInterests && <Alert style={alertStyle} variant="danger">Enter at least 3 artists</Alert>}
+                            <DropdownField 
+                                value={artistQuery}
+                                onInput={setArtistQuery}
+                                label="Favorite Artists:" 
+                                type="text"
+                                hasMore={cachedSearches[artistQuery] && cachedSearches[artistQuery].page < cachedSearches[artistQuery].totalPages}
+                                onMore={moreEntries}
+                                onSelect={onArtistSelect}
+                                entries={artistQueryResults}/>
+                            <ul style={instrumentsListStyle}>
+                                {profile.musicInterests.map(artist => (
+                                    <li className="removable-list-entry" key={artist.path}>
+                                        <div style={artistContainer}>
+                                            <img style={artistImageStyle} src={artist.thumb}/>
+                                            <div style={artistNameStyle}>{artist.name}</div>
+                                            <button style={artistButtonStyle} onClick={e => removeArtist(artist)}>x</button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                    {isCurrentUser && <div className="row">
+                        <div className="col-6">
+                            <ErrorInputField 
+                                value={preferences.maxDistance.value}
+                                onInput={setMaxDistance}
+                                label="Max Match Distance (Miles): " 
+                                type="text" 
+                                isError={maxDistanceError()}
+                                message={maxDistanceErrorMessage()}/>
+                        </div>
+                        <div className="col-6">
+                            <DropdownField 
+                                value={wantedInstQuery}
+                                onInput={setWantedInstQuery}
+                                label="Wanted Instruments (Empty for any):" 
+                                type="text"
+                                hasMore={false}
+                                onSelect={onWantedInstrumentSelect}
+                                entries = {filteredWantedInstruments.map(inst => {return {
+                                    name: inst, 
+                                    html: (<span>{inst}</span>)
+                                }})}/>
+                            <ul style={instrumentsListStyle}>
+                                {preferences.wantedInstruments.map(instrument => (
+                                    <li className="removable-list-entry" key={instrument}>
+                                        <span>{instrument}</span>
+                                        <button onClick={e => removeWantedInstrument(instrument)}>x</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>}
                     {isCurrentUser && <>
                         <br/>
                         <div className="row g-0">
