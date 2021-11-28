@@ -240,9 +240,7 @@ const SignUp = (props) => {
                 "longitude": location.coords.longitude.toString(),
                 "latitude": location.coords.latitude.toString()
             },
-            "musicInterests": artists.map(artist => {
-                return {"name": artist.name, "path": artist.path}
-            }),
+            "musicInterests": artists,
             "instruments": knownInstruments
         });
         if (response.ok) {
