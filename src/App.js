@@ -59,7 +59,7 @@ function App() {
                 <div className="row" style={contentStyle}>
                     {sessionToken != null && sessionToken.length > 0 
                     ? <Switch>
-                        <Route exact path="/home">
+                        <Route exact path={["/", "/home"]}>
                             <Welcome/>
                         </Route>
                         <Route exact path="/logout">
@@ -101,7 +101,7 @@ function App() {
                         </Route>
                     </Switch>
                     : <Switch>
-                        <Route exact path="/login">
+                        <Route exact path={["/", "/login"]}>
                             <Login setSessionToken={setSessionToken} apiService={apiService}/>
                         </Route>
                         <Route exact path="/sign-up">
