@@ -150,7 +150,7 @@ const FindFriend = (props) => {
                             <table style = {StyledTable}>   
                             <tr>
                             <td><button style = {button} onClick={acceptMatch }>{buttonText}</button> </td>
-                            <td><button style = {button} onClick={ rejectMatch }>NO</button></td>
+                            <td><button style = {button} onClick={ rejectMatch }>No</button></td>
                             
                             </tr>
                             </table>
