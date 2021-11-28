@@ -46,6 +46,33 @@ class JamAPIService {
         })
     }
 
+    remNotifications(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"remove"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
+    rejNotifications(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"reject"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
+    accNotifications(userId) {
+        return this.apiRequest(API_CALL_URL("notifications",userId,"accept"), {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },           
+        })
+    }
+
     acceptMatch(userId){
         return this.apiRequest(API_CALL_URL("match","accept"), {
             method: "POST",
@@ -218,6 +245,7 @@ class JamAPIService {
             headers: {"Accept": "application/json"}
         });
     }
+
 
     test() {
         return fetch(API_CALL_URL("test", "user", "random"), {
