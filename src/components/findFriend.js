@@ -2,7 +2,7 @@ import React, {useState, useRef,useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import '../App.css';
 import ProfileImage from '../util/profileImage';
-
+import * as FaIcons from 'react-icons/fa';
 
 const button={
     cursor: 'pointer',
@@ -115,8 +115,8 @@ const FindFriend = (props) => {
                                                     
                             <table style = {StyledTable}>   
                             <tr>
-                            <td><button style = {button} onClick={acceptMatch }>{buttonText}</button> </td>
-                            <td><button style = {button} onClick={ rejectMatch }>No</button></td>
+                            <td><button style = {button} onClick={acceptMatch }><FaIcons.FaCheck className="icon"/></button> </td>
+                            <td><button style = {button} onClick={ rejectMatch }><FaIcons.FaBan className="icon"/></button></td>
                             
                             </tr>
                             </table>
