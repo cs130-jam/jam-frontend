@@ -399,36 +399,4 @@ describe("Jam Services Testing", () => {
         done();
 	});
 
-  it('has the class jam-form', () => {
-    expect(component).to.have.class('jam-form');
-  });
-
-  it('has the class jam-title-text', () => {
-    expect(component).to.have.class('jam-title-text');
-  });
-
-  it('has the class jam-submit-button', () => {
-    expect(component).to.have.class('jam-submit-button');
-  });
-
-  it("Redirects to Signup Component", () => {
-    act(() => {
-        const signupLink = document.querySelector($(Link));
-        signupLink.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-      });
-      expect(location.pathname).toBe("/sign-up");
-  });
-
-  it("set username", ()=>{
-    const wrapper = shallow(<Login />);
-    wrapper.onUsername("testuser");
-    chai.expect(wrapper.state().username).to.equal("testuser");
-  });
-
-  it("set password", ()=>{
-    const wrapper = shallow(<Login />);
-    wrapper.onPassword("testpassword");
-    chai.expect(wrapper.state().password).to.equal("testpassword");
-  });
-
 });
