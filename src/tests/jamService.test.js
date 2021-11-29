@@ -46,17 +46,6 @@ describe("Jam Services Testing", () => {
         done();
 	});
 
-    it("Login success case", done => {
-
-        const input = {
-            "username": String,
-            "password": String
-        };
-        let response = await JamAPIService.login(loginData);
-        expect(response.status).to.equal(200);
-        done();
-	});
-
     it("Signup success", done => {
 
         const input = {
