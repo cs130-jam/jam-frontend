@@ -105,6 +105,8 @@ const UpdateProfile = (props) => {
     const [artistQuery, setArtistQuery] = useState("");
     const [isValidInterests, setIsValidInterests] = useState(true);
 
+    const [timestamp, setTimestamp] = useState(Date.now());
+
     function matchingPrefixIgnoreCase(prefix, entries) {
         prefix = prefix.toLowerCase();
         return entries.filter(entry => {
@@ -303,9 +305,9 @@ const UpdateProfile = (props) => {
 
     async function uploadPfp(pfpForm) {
         let response = await apiService.uploadPfp(pfpForm);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        await loadUser();
-        return response;
+        loadUser();
+        setTimestamp(Date.now());
+        return response; 
     }
 
     async function addFriend() {
@@ -340,7 +342,7 @@ const UpdateProfile = (props) => {
                     <div className="row">
                         <div className="col-6">
                             <div style={centeredStyle}>
-                                <ProfileImage url={profile.pfpUrl} size={340}/>
+                                <ProfileImage url={profile.pfpUrl} size={340} timestamp={timestamp}/>
                                 {isCurrentUser && <FileUpload 
                                     postUpload={uploadPfp}
                                     getAccepted={apiService.getSupportedPfpFormats.bind(apiService)}/>}

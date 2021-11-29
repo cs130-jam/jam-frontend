@@ -65,6 +65,7 @@ const FindFriend = (props) => {
     const [buttonText, setButtonText] = useState("Yes"); //same as creating your state variable where "Next" is the default value for buttonText and setButtonText is the setter function for your state variable instead of setState
     const [selected, setSelected] = useState({});
     const [loaded, setLoaded] = useState(false);
+    const [timestamp, setTimestamp] = useState(Date.now());
 
     async function rejectMatch(){
         let response = await apiService.rejectMatch(selected.id);
@@ -98,6 +99,7 @@ const FindFriend = (props) => {
         let userJson = await userResponse.json();
         setSelected(userJson);
         setLoaded(true);
+        setTimestamp(Date.now());
     }
 
     
@@ -108,7 +110,7 @@ const FindFriend = (props) => {
         <div>
               <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
                      
-                            <ProfileImage url={selected.profile.pfpUrl} size={350}/>
+                            <ProfileImage url={selected.profile.pfpUrl} size={350} timestap={timestamp}/>
                             <div style = {bioStyle} className="text-center">bio: {selected.profile.bio}</div> 
                             <table style = {StyledTable}><tr><td style = {JS}>Music Interests:</td><td style = {jobStyle} className="text-center">{selected.profile.musicInterests[0].name}, {selected.profile.musicInterests[1].name}, {selected.profile.musicInterests[2].name}</td></tr></table>      
                             <table style = {StyledTable}><tr><td style = {JS}>Instruments known:</td><td style = {jobStyle} className="text-center">{selected.profile.instruments.join(", ")}</td></tr></table>      

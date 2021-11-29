@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const FALLBACK_IMG = "https://i.pinimg.com/originals/0c/3b/3a/0c3b3adb1a7530892e55ef36d3be6cb8.png";
 
@@ -34,7 +34,8 @@ const ProfileImage = (props) => {
 
     return (
         <div style={cropStyle}>
-            <img 
+            <img
+                key={props.timestamp}
                 ref={ref}
                 style={style}
                 src={"http://localhost" + props.url}
