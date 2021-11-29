@@ -2,8 +2,16 @@ import React, {useState, useRef,useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import '../App.css';
 import ProfileImage from '../util/profileImage';
-
-
+import * as FaIcons from 'react-icons/fa';
+//import { Container } from 'react-bootstrap';
+const container = {
+  margin: "24px auto",
+  width: "800px",
+  padding: "16px",
+  border: "1px solid #c9c9c9",
+  borderRadius: "5px",
+  background: "#f5f5f5"
+};
 const button={
     cursor: 'pointer',
     border: '1px solid #1a202c',
@@ -107,7 +115,7 @@ const FindFriend = (props) => {
     
 
     return ( loaded &&
-        <div>
+        <div style = {container}>
               <div style = {nameStyle} className="text-center">{selected.profile.firstName} {selected.profile.lastName}</div>
                      
                             <ProfileImage url={selected.profile.pfpUrl} size={350} timestap={timestamp}/>
@@ -117,8 +125,8 @@ const FindFriend = (props) => {
                                                     
                             <table style = {StyledTable}>   
                             <tr>
-                            <td><button style = {button} onClick={acceptMatch }>{buttonText}</button> </td>
-                            <td><button style = {button} onClick={ rejectMatch }>No</button></td>
+                            <td><button style = {button} onClick={acceptMatch }><FaIcons.FaCheck className="icon"/></button> </td>
+                            <td><button style = {button} onClick={ rejectMatch }><FaIcons.FaBan className="icon"/></button></td>
                             
                             </tr>
                             </table>

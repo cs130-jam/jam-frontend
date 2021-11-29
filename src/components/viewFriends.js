@@ -19,6 +19,14 @@ const button={
   margin: '10px 10px'
 
   }
+  const container = {
+    margin: "24px auto",
+    width: "800px",
+    padding: "16px",
+    border: "1px solid #c9c9c9",
+    borderRadius: "5px",
+    background: "#f5f5f5"
+};
 
 
  const textalign =  {
@@ -126,17 +134,10 @@ const button={
     
    useEffect(() => loadUsers(), []);
    return (  
-    <div className="container">
-        <h3 className="p-3 text-center">My Friends</h3>
+    <div style = {container}>
+        <h1 className="p-3 text-center">My Friends</h1>
         <table className="table table-striped table-bordered" style = {StyledTable}>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                   
-                    <th>Message</th>
-                    <th>Unfriend</th>
-                </tr>
-            </thead>
+            
             <tbody>
                {users && users.map(user =>
                     <tr key = {user.id}>
